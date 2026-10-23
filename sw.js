@@ -1,4 +1,4 @@
-const V='arr-v4',F=['./','./index.html','./manifest.webmanifest','./icon-192.png?v=2','./icon-512.png?v=2'];
+const V='arr-v5',F=['./','./index.html','./manifest.webmanifest','./icon-192.png?v=3','./icon-512.png?v=3'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(F)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V).map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;

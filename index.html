@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png?v=2">
-<link rel="apple-touch-icon" href="icon-192.png?v=2">
+<link rel="icon" href="icon-192.png?v=3">
+<link rel="apple-touch-icon" href="apple-touch-icon.png?v=3">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
@@ -61,7 +61,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 .sl .bar small{color:#A9C9B8;font-size:.8em}.sl .bar{grid-template-columns:minmax(140px,24%) 1fr minmax(150px,24%);font-size:clamp(12px,2.2vmin,22px);margin:1.4vmin 0}.sl .trk{background:#ffffff22;height:3.4vmin}.sl .trk i{background:#4FAE80}.sl .bar.b .trk i{background:var(--gold2)}
 .sl ol{margin:0;padding-left:1.3em;font-size:clamp(15px,2.9vmin,29px);display:grid;gap:1.6vmin}
 .dcb{position:absolute;z-index:21;background:#ffffff1f;color:#fff;border:1px solid #ffffff44;padding:8px 14px;min-height:40px}
-.dcb.p{left:12px;bottom:12px}.dcb.n{right:12px;bottom:12px}.dcb.x{top:12px;right:12px}.dcb.pdf{top:12px;right:80px}
+.tt{position:absolute;left:50%;transform:translateX(-50%);bottom:64px;z-index:22;background:var(--gold);color:#1b1405;padding:12px 18px;border-radius:12px;font-weight:800;text-decoration:none}.dcb.p{left:12px;bottom:12px}.dcb.n{right:12px;bottom:12px}.dcb.x{top:12px;right:12px}.dcb.pdf{top:12px;right:80px}
 @media print{@page{size:A4 landscape;margin:0}body{background:#fff}body>*:not(#dk){display:none!important}#dk{position:static}#deck{display:block;overflow:visible;height:auto}.sl{width:297mm;height:210mm;break-after:page;padding:16mm 20mm}.dcb{display:none}}
 @media(prefers-reduced-motion:no-preference){#deck{scroll-behavior:smooth}}
 </style>
@@ -107,7 +107,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
  </section>
 </main>
 <div class="dock"><div id="dkt"></div><button class="gold" id="go2">Ver apresentação</button></div>
-<div id="dk" hidden><div id="deck"></div><button class="dcb p" id="pv" aria-label="Slide anterior">‹ Voltar</button><button class="dcb n" id="nx" aria-label="Próximo slide">Avançar ›</button><button class="dcb pdf" id="pdf">Salvar PDF</button><button class="dcb x" id="cl">Fechar</button></div>
+<div id="dk" hidden><div id="deck"></div><button class="dcb p" id="pv" aria-label="Slide anterior">‹ Voltar</button><button class="dcb n" id="nx" aria-label="Próximo slide">Avançar ›</button><button class="dcb pdf" id="pdf">Salvar PDF</button><button class="dcb x" id="cl">Fechar</button><a id="tt" class="tt" hidden target="_blank" rel="noopener"></a></div>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
 const R=n=>(Number.isFinite(n)?n:0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
@@ -159,7 +159,58 @@ const go=()=>$('#deck').scrollBy({left:0});
 const mv=d=>$('#deck').scrollBy({left:d*$('#deck').clientWidth});
 $('#go').onclick=$('#go2').onclick=deck;
 $('#cl').onclick=()=>{$('#dk').hidden=true;document.body.style.overflow=''};
-$('#pv').onclick=()=>mv(-1);$('#nx').onclick=()=>mv(1);$('#pdf').onclick=()=>window.print();
+$('#pv').onclick=()=>mv(-1);$('#nx').onclick=()=>mv(1);function pdfFrom(J,W,H){const en=new TextEncoder(),P=[],O=[];let L=0;
+const put=b=>{const u=typeof b==='string'?en.encode(b):b;P.push(u);L+=u.length};
+const ob=(n,f)=>{O[n]=L;put(n+' 0 obj\n');f();put('\nendobj\n')};
+const N=J.length,T=3+3*N;
+put('%PDF-1.4\n');
+ob(1,()=>put('<< /Type /Catalog /Pages 2 0 R >>'));
+ob(2,()=>put('<< /Type /Pages /Count '+N+' /Kids ['+J.map((_,i)=>(3+3*i)+' 0 R').join(' ')+'] >>'));
+J.forEach((j,i)=>{const p=3+3*i,c='q '+W/2+' 0 0 '+H/2+' 0 0 cm /Im0 Do Q';
+ob(p,()=>put('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+W/2+' '+H/2+'] /Resources << /XObject << /Im0 '+(p+2)+' 0 R >> >> /Contents '+(p+1)+' 0 R >>'));
+ob(p+1,()=>put('<< /Length '+c.length+' >>\nstream\n'+c+'\nendstream'));
+ob(p+2,()=>{put('<< /Type /XObject /Subtype /Image /Width '+W+' /Height '+H+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+j.length+' >>\nstream\n');put(j);put('\nendstream')})});
+const x=L;put('xref\n0 '+T+'\n0000000000 65535 f \n');
+for(let k=1;k<T;k++)put(String(O[k]).padStart(10,'0')+' 00000 n \n');
+put('trailer\n<< /Size '+T+' /Root 1 0 R >>\nstartxref\n'+x+'\n%%EOF');
+return new Blob(P,{type:'application/pdf'})}
+async function makePdf(){const r=calc(),g=S.g,f=r.rows.find(z=>z.c.k===g.focus)||r.rows[0],n=r.rows.length,mx=r.rows[0].aH||1,
+loc=[g.property,g.region].filter(Boolean).join(' · '),dt=g.date?new Date(g.date+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'';
+try{await Promise.all([document.fonts.load('600 64px Fraunces'),document.fonts.load('400 24px Manrope'),document.fonts.load('800 24px Manrope')])}catch{}
+const W=1920,H=1080,X=86,cv=document.createElement('canvas');cv.width=W;cv.height=H;const c=cv.getContext('2d');
+const SF='Fraunces,Georgia,serif',SS='Manrope,system-ui,sans-serif';
+const rr=(x,y,w,h,d)=>{c.beginPath();c.moveTo(x+d,y);c.arcTo(x+w,y,x+w,y+h,d);c.arcTo(x+w,y+h,x,y+h,d);c.arcTo(x,y+h,x,y,d);c.arcTo(x,y,x+w,y,d);c.closePath()};
+const wrap=(t,w)=>{const A=[];let l='';for(const wd of String(t).split(' ')){const m=l?l+' '+wd:wd;if(c.measureText(m).width>w&&l){A.push(l);l=wd}else l=m}if(l)A.push(l);return A};
+const txt=(t,x,y,font,col,w,lh,al)=>{c.font=font;c.fillStyle=col;c.textAlign=al||'left';c.textBaseline='alphabetic';const A=w?wrap(t,w):[t];A.forEach((s,i)=>c.fillText(s,x,y+i*(lh||0)));return y+(A.length-1)*(lh||0)};
+const fit=(t,wt,sz,fam,w)=>{c.font=wt+' '+sz+'px '+fam;while(c.measureText(t).width>w&&sz>12){sz-=2;c.font=wt+' '+sz+'px '+fam}return c.font};
+const bg=i=>{c.fillStyle='#0C2E22';c.fillRect(0,0,W,H);const gr=c.createRadialGradient(W*.85,0,0,W*.85,0,W*.75);gr.addColorStop(0,'#1d6b4c');gr.addColorStop(1,'rgba(29,107,76,0)');c.fillStyle=gr;c.fillRect(0,0,W,H);
+txt('ArrendaAgro',X,70,'600 22px '+SS,'#A9C9B8');txt(i+' de 5 · Valores estimados com cotações de '+dt+'. Não constituem oferta firme.',X,H-40,'400 16px '+SS,'#7FA791')};
+const T=[
+()=>{const y=txt('Proposta de arrendamento rural',X,400,'600 104px '+SF,'#fff',1250,114)+70;const a='Preparada para ';c.font='400 34px '+SS;const w=c.measureText(a).width;
+txt(a,X,y,'400 34px '+SS,'#CFE6D9');txt(g.client||'você',X+w,y,'800 34px '+SS,'#fff');txt(loc,X,y+56,'400 34px '+SS,'#CFE6D9',1250,46);txt(dt,X,y+112,'400 34px '+SS,'#CFE6D9')},
+()=>{txt('A sua área',X,330,'600 70px '+SF,'#fff');const b=N(r.a)+' ha';txt(b,X,560,fit(b,600,200,SF,W-2*X),'#E8C879');
+txt((loc?loc+'. ':'')+'Avaliamos '+n+' '+(n>1?'culturas':'cultura')+', cada uma com o seu prazo de contrato'+(r.e?', com reajuste de '+N(g.esc)+'% ao ano':'')+'.',X,650,'400 32px '+SS,'#CFE6D9',1150,46)},
+()=>{txt(f.c.e+' '+f.c.n+': o que a sua terra pode render',X,250,'600 62px '+SF,'#fff',1600,72);const b=R(f.aH);txt(b,X,540,fit(b,600,170,SF,W-2*X),'#E8C879');
+txt('por hectare ao ano · '+f.c.b(f.x),X,600,'400 30px '+SS,'#CFE6D9',1600,42);
+const cw=(W-2*X)/4,V=[[R(f.mH),'por hectare ao mês'],[R(f.mo),'por mês na sua área'],[R(f.ar),'por ano na sua área'],[R(f.tot),'em '+f.y+' '+pl(f.y)]];
+V.forEach((v,i)=>{const x=X+i*cw;txt(v[0],x,790,fit(v[0],600,52,SF,cw-24),'#fff');txt(v[1],x,832,'400 22px '+SS,'#A9C9B8')})},
+()=>{txt('Comparativo entre culturas',X,250,'600 70px '+SF,'#fff');txt('Arrendamento estimado por hectare ao ano',X,305,'400 30px '+SS,'#CFE6D9');
+const y0=380,st=Math.min(120,(H-y0-110)/n),tx=X+480,tw=W-2*X-480-380;
+r.rows.forEach((z,i)=>{const y=y0+i*st;const l=z.c.e+' '+z.c.n+' · '+z.y+' '+pl(z.y);txt(l,X,y+30,fit(l,600,26,SS,450),'#fff');
+c.fillStyle='rgba(255,255,255,.14)';rr(tx,y+6,tw,38,10);c.fill();c.fillStyle=z===f?'#E8C879':'#4FAE80';rr(tx,y+6,Math.max(20,tw*z.aH/mx),38,10);c.fill();
+txt(R(z.aH),W-X,y+30,'800 28px '+SS,'#fff',0,0,'right');txt(R(z.mo)+' por mês na área',W-X,y+58,'600 18px '+SS,'#A9C9B8',0,0,'right')})},
+()=>{txt('Próximos passos',X,300,'600 70px '+SF,'#fff');['Confirmamos a área e as cotações atuais.','Alinhamos prazo, reajuste e forma de pagamento.','Formalizamos o contrato de arrendamento.'].forEach((s,i)=>{txt(String(i+1)+'.',X,430+i*84,'600 40px '+SF,'#E8C879');txt(s,X+60,430+i*84,'400 36px '+SS,'#fff')});
+txt(g.cons+(g.cons&&g.contact?' · ':'')+g.contact,X,780,'800 32px '+SS,'#fff')}];
+const J=[];for(let i=0;i<5;i++){bg(i+1);T[i]();const b=await new Promise(ok=>cv.toBlob(ok,'image/jpeg',.92));J.push(new Uint8Array(await b.arrayBuffer()))}
+return pdfFrom(J,W,H)}
+const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+$('#pdf').onclick=async()=>{const b=$('#pdf'),t=b.textContent;b.disabled=true;b.textContent='Gerando…';$('#tt').hidden=true;
+try{const blob=await makePdf(),name='proposta-arrendamento.pdf',file=new File([blob],name,{type:'application/pdf'});
+if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'Proposta de arrendamento'});return}catch(e){if(e.name==='AbortError')return}}
+const u=URL.createObjectURL(blob),a=$('#tt');a.href=u;a.download=name;a.textContent='PDF pronto: toque para abrir';
+if(ios)a.hidden=false;else a.click()}
+catch(e){alert('Não foi possível gerar o PDF neste aparelho.')}finally{b.disabled=false;b.textContent=t}};
+
 addEventListener('keydown',e=>{if($('#dk').hidden)return;if(e.key==='ArrowRight')mv(1);if(e.key==='ArrowLeft')mv(-1);if(e.key==='Escape')$('#cl').click()});
 $('#wa').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
  const t=`*Proposta de arrendamento rural*\n${[g.property,g.region].filter(Boolean).join(' — ')}\nÁrea: ${N(r.a)} ha\n\n`+r.rows.map(z=>`${z.c.e} ${z.c.n}: ${R(z.aH)}/ha/ano → ${R(z.mo)}/mês (${R(z.ar)}/ano) na área · ${z.y} ${pl(z.y)}`).join('\n')+`\n\nValores estimados, sujeitos a confirmação de cotações e contrato.\n${[g.cons,g.contact].filter(Boolean).join(' · ')}`;
