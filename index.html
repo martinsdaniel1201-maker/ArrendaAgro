@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Simulador de Arrendamento Rural</title>
+<meta name="theme-color" content="#0C2E22">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--g9:#0C2E22;--g7:#14573F;--g5:#2E8B5E;--g1:#E2EEE7;--bg:#EEF2EF;--ink:#13221B;--mut:#5A6A61;--gold:#C39A3F;--gold2:#E8C879;--line:#D3DED7}
+*{box-sizing:border-box;print-color-adjust:exact;-webkit-print-color-adjust:exact}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Manrope,system-ui,sans-serif;-webkit-text-size-adjust:100%}
+.top{background:var(--g9);color:#fff;padding:14px 18px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+.brand b{font:600 20px Fraunces,Georgia,serif;display:block}.brand span{font-size:12px;color:#A9C9B8}
+.top div:last-child{display:flex;gap:8px}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:12px 18px;cursor:pointer;background:var(--g7);color:#fff;min-height:44px}
+button.gold{background:var(--gold);color:#1b1405}button.ghost{background:transparent;color:#fff;border:1px solid #ffffff55;padding:8px 12px;min-height:40px;font-size:13px}button.alt{background:#fff;color:var(--g7);border:1.5px solid var(--g7)}
+main{max-width:980px;margin:auto;padding:20px 16px 120px}
+section{margin:0 0 26px}
+h2{font:600 24px Fraunces,Georgia,serif;margin:0 0 4px;color:var(--g9)}.lead{color:var(--mut);margin:0 0 14px;font-size:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.f label{display:block;font-size:13px;font-weight:600;color:#3d4f45;margin-bottom:5px}
+input,select{width:100%;font:inherit;padding:12px;border:1.5px solid #C3D1C9;border-radius:10px;background:#fff;color:var(--ink);min-height:46px}
+input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);outline-offset:1px;border-color:var(--g5)}
+.hint{font-size:13px;color:var(--mut);margin:12px 0 0}
+#cults{display:grid;gap:14px}
+.cc{background:#fff;border:1.5px solid var(--line);border-radius:18px;overflow:hidden}.cc:not(.on){opacity:.6}
+.hd{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;background:var(--g1)}
+.hd input{width:22px;height:22px;min-height:0;accent-color:var(--g7)}
+.em{font-size:26px}.hd b{display:block;font:600 18px Fraunces,Georgia,serif}.hd small{color:var(--mut);font-size:12px}
+.rs{margin-left:auto;text-align:right;font-weight:800;color:var(--g7);font-size:14px}
+.fl{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:16px}
+.cc p{margin:0;padding:0 16px 14px;font-size:12.5px;color:var(--mut)}.cc p.w{color:#8a5a00}
+.win{background:linear-gradient(135deg,var(--g9),var(--g7));color:#fff;border-radius:20px;padding:22px;margin-bottom:16px}
+.win strong{font:600 clamp(26px,5vw,36px) Fraunces,Georgia,serif;display:block;margin:2px 0 6px}.win span{color:#CFE6D9;font-size:14px}
+.bar{display:grid;grid-template-columns:150px 1fr 120px;gap:10px;align-items:center;margin:12px 0;font-size:13px}
+.trk{height:22px;background:var(--g1);border-radius:8px;overflow:hidden}.trk i{display:block;height:100%;background:var(--g5);border-radius:8px}.bar.b .trk i{background:var(--gold)}
+.tw{overflow-x:auto;margin-top:8px}table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:580px}th,td{padding:10px;text-align:left;border-bottom:1px solid var(--line)}th{color:var(--mut);font-weight:600}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.note{font-size:12px;color:var(--mut);background:#fff8e6;border:1px solid #ecd9a4;border-radius:12px;padding:12px;margin-top:14px}
+.dock{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;gap:12px;align-items:center;justify-content:space-between;z-index:6;box-shadow:0 -6px 20px #0c2e2218}
+.dock div{font-size:13px;min-width:0}.dock b{display:block;font-size:15px;color:var(--g9)}
+@media(max-width:560px){.bar{grid-template-columns:100px 1fr}.bar strong{grid-column:2}}
+#dk{position:fixed;inset:0;z-index:20;background:var(--g9)}
+#deck{display:flex;height:100%;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.sl{flex:0 0 100%;height:100%;scroll-snap-align:start;color:#fff;padding:9vmin 8vmin 8vmin;display:flex;flex-direction:column;justify-content:center;gap:2.4vmin;position:relative;background:radial-gradient(120% 90% at 85% 0%,#1d6b4c 0%,transparent 60%),var(--g9);overflow:hidden}
+.sl h1,.sl h2{font-family:Fraunces,Georgia,serif;font-weight:600;color:#fff;margin:0;line-height:1.08}
+.sl h1{font-size:clamp(34px,9vmin,92px);max-width:11em}.sl h2{font-size:clamp(26px,5.6vmin,58px)}
+.sl p{margin:0;color:#CFE6D9;font-size:clamp(15px,2.7vmin,27px);max-width:34em}.sl p b{color:#fff}
+.big{font:600 clamp(44px,15vmin,160px)/1 Fraunces,Georgia,serif;color:var(--gold2)}
+.row{display:flex;gap:6vmin;flex-wrap:wrap;margin-top:1vmin}.row b{display:block;font:600 clamp(20px,4.6vmin,46px) Fraunces,Georgia,serif;color:#fff}.row span{font-size:clamp(12px,2vmin,20px);color:#A9C9B8}
+.br{position:absolute;top:4vmin;left:8vmin;font-size:clamp(11px,1.8vmin,16px);color:#A9C9B8;font-weight:600}
+.ft{position:absolute;bottom:3.5vmin;left:8vmin;right:8vmin;font-size:clamp(9px,1.5vmin,13px);color:#7FA791}
+.sl .bar{grid-template-columns:minmax(120px,24%) 1fr minmax(120px,20%);font-size:clamp(12px,2.2vmin,22px);margin:1.4vmin 0}.sl .trk{background:#ffffff22;height:3.4vmin}.sl .trk i{background:#4FAE80}.sl .bar.b .trk i{background:var(--gold2)}
+.sl ol{margin:0;padding-left:1.3em;font-size:clamp(15px,2.9vmin,29px);display:grid;gap:1.6vmin}
+.dcb{position:absolute;z-index:21;background:#ffffff1f;color:#fff;border:1px solid #ffffff44;padding:8px 14px;min-height:40px}
+.dcb.p{left:12px;bottom:12px}.dcb.n{right:12px;bottom:12px}.dcb.x{top:12px;right:12px}.dcb.pdf{top:12px;right:80px}
+@media print{@page{size:A4 landscape;margin:0}body{background:#fff}body>*:not(#dk){display:none!important}#dk{position:static}#deck{display:block;overflow:visible;height:auto}.sl{width:297mm;height:210mm;break-after:page;padding:16mm 20mm}.dcb{display:none}}
+@media(prefers-reduced-motion:no-preference){#deck{scroll-behavior:smooth}}
+</style>
+</head>
+<body>
+<header class="top">
+ <div class="brand"><b>Arrendamento rural</b><span>Ipiranga Agroindustrial · Parcerias</span></div>
+ <div><button class="ghost" id="inst" hidden>Instalar app</button><button class="ghost" id="rst">Restaurar valores</button></div>
+</header>
+<main>
+ <section>
+  <h2>Sobre a área</h2><p class="lead">Preencha os dados da propriedade. Tudo é calculado na hora e salvo neste aparelho.</p>
+  <div class="card"><div class="grid">
+   <div class="f"><label>Propriedade ou cenário</label><input data-g="property"></div>
+   <div class="f"><label>Município / UF</label><input data-g="region"></div>
+   <div class="f"><label>Unidade da área</label><select data-g="unit"><option value="ha">Hectares (ha)</option><option value="alq">Alqueire paulista (2,42 ha)</option><option value="alqm">Alqueire mineiro (4,84 ha)</option></select></div>
+   <div class="f"><label>Tamanho da área</label><input data-g="area" type="number" inputmode="decimal" min="0" step="0.01"></div>
+   <div class="f"><label>Período do arrendamento (anos)</label><input data-g="years" type="number" inputmode="numeric" min="1" step="1"></div>
+   <div class="f"><label>Reajuste anual do contrato (%)</label><input data-g="esc" type="number" inputmode="decimal" min="0" step="0.1"></div>
+   <div class="f"><label>Data das cotações usadas</label><input data-g="date" type="date"></div>
+  </div><p class="hint" id="hint"></p></div>
+ </section>
+ <section>
+  <h2>Culturas</h2><p class="lead">Marque as culturas que quer comparar. Os campos já vêm com valores de referência: ajuste conforme a negociação.</p>
+  <div id="cults"></div>
+ </section>
+ <section>
+  <h2>Resultado</h2><p class="lead">Valor bruto estimado de arrendamento, antes de impostos e despesas.</p>
+  <div class="win" id="win"></div>
+  <div class="card"><div id="bars"></div>
+   <div class="tw"><table><thead><tr><th>Cultura</th><th>R$/ha/mês</th><th>Arrendamento estimado R$/ha/ano</th><th>Total por ano na área</th><th id="thp">Total no período</th></tr></thead><tbody id="tbl"></tbody></table></div>
+  </div>
+ </section>
+ <section>
+  <h2>Apresentação</h2><p class="lead">Gera uma apresentação pronta para mostrar ao proprietário ou fornecedor.</p>
+  <div class="card"><div class="grid">
+   <div class="f"><label>Nome do proprietário / fornecedor</label><input data-g="client" placeholder="Ex.: Sr. João da Silva"></div>
+   <div class="f"><label>Consultor</label><input data-g="cons"></div>
+   <div class="f"><label>Telefone ou e-mail para contato</label><input data-g="contact"></div>
+   <div class="f"><label>Cultura em destaque</label><select data-g="focus" id="focus"></select></div>
+  </div>
+  <div class="btns"><button class="gold" id="go">Gerar apresentação</button><button class="alt" id="wa">Enviar resumo por WhatsApp</button><button class="alt" id="csv">Exportar planilha (CSV)</button></div></div>
+  <div class="note"><b>Importante:</b> não existe um preço único de arrendamento para todo o Brasil. Os valores são estimativas para comparação, calculadas com as cotações que você informar. Antes de negociar, confirme preços, praça, forma de pagamento, índice de reajuste, prazo e responsabilidades sobre o solo e as benfeitorias. Não substitui avaliação agronômica nem análise jurídica do contrato.</div>
+ </section>
+</main>
+<div class="dock"><div id="dkt"></div><button class="gold" id="go2">Ver apresentação</button></div>
+<div id="dk" hidden><div id="deck"></div><button class="dcb p" id="pv" aria-label="Slide anterior">‹ Voltar</button><button class="dcb n" id="nx" aria-label="Próximo slide">Avançar ›</button><button class="dcb pdf" id="pdf">Salvar PDF</button><button class="dcb x" id="cl">Fechar</button></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+const R=n=>(Number.isFinite(n)?n:0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const N=n=>(+n||0).toLocaleString('pt-BR',{maximumFractionDigits:2});
+const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const U={ha:1,alq:2.42,alqm:4.84};
+const S2=(k,n,e,ref,cy,qL,q,qs,pL,p,ps,u,pu,ilus,mul=1)=>({k,n,e,ref,cy,ilus,f:[['q',qL,q,qs],['p',pL,p,ps]],v:x=>x.q*x.p*mul,b:x=>`${N(x.q)} ${u} × ${R(+x.p)}/${pu}`});
+const C=[
+ {k:'cana',n:'Cana-de-açúcar',e:'🌾',ref:'Preço do ATR: CONSECANA-SP',cy:'5 a 6 anos (ciclo de cortes)',f:[['atr','Preço do ATR (R$/kg)',0.8839,.0001],['t','Arrendamento estimado (t de cana/ha/ano)',85,1],['kg','ATR estimado (kg/t de cana)',140,1]],v:x=>x.atr*x.t*x.kg,b:x=>`${N(x.t)} t/ha/ano × ${N(x.kg)} kg ATR/t × ${R(+x.atr)}/kg ATR`},
+ S2('soja','Soja','🫘','Preço: CEPEA/ESALQ','1 safra, renovável a cada ano','Arrendamento estimado (sacas de 60 kg/ha/ano)',12.6,.1,'Preço da saca (R$)',148.04,.5,'sc/ha/ano','sc'),
+ S2('milho','Milho','🌽','Preço: CEPEA/ESALQ','1 safra, renovável a cada ano','Arrendamento estimado (sacas de 60 kg/ha/ano)',24.8,.1,'Preço da saca (R$)',64.74,.5,'sc/ha/ano','sc'),
+ S2('pec','Pecuária a pasto','🐂','Preço: CEPEA/ESALQ','3 anos ou mais','Arrendamento estimado (arrobas/ha/mês)',.25,.01,'Valor da arroba (R$)',300,1,'@/ha/mês','@',false,12),
+ S2('banana','Banana','🍌','Preço: mercado local / CEPEA Hortifruti','4 a 5 anos','Arrendamento estimado (caixas de 20 kg/ha/ano)',350,10,'Preço da caixa (R$)',20,.5,'cx/ha/ano','cx',true),
+ S2('cafe','Café','☕','Preço: CEPEA/ESALQ (arábica)','Vários anos (lavoura permanente)','Arrendamento estimado (sacas de 60 kg/ha/ano)',8,.5,'Preço da saca (R$)',1500,10,'sc/ha/ano','sc',true)
+];
+const D=()=>({g:{property:'Área rural — estudo preliminar',region:'Passos — MG',unit:'ha',area:25,years:1,esc:0,date:new Date().toISOString().slice(0,10),client:'',cons:'Luís Duarte',contact:'',focus:'best'},on:Object.fromEntries(C.map(c=>[c.k,true])),v:Object.fromEntries(C.map(c=>[c.k,Object.fromEntries(c.f.map(f=>[f[0],f[2]]))]))});
+let S;try{const d=D(),s=JSON.parse(localStorage.getItem('arr1')||'{}');S={g:{...d.g,...s.g},on:{...d.on,...s.on},v:Object.fromEntries(C.map(c=>[c.k,{...d.v[c.k],...(s.v||{})[c.k]}]))}}catch{S=D()}
+$('#cults').innerHTML=C.map(c=>`<article class="cc" id="c-${c.k}"><label class="hd"><input type="checkbox" data-on="${c.k}"><span class="em">${c.e}</span><span><b>${c.n}</b><small>${c.ref}</small></span><span class="rs" id="r-${c.k}"></span></label><div class="fl">${c.f.map(f=>`<div class="f"><label>${f[1]}</label><input type="number" inputmode="decimal" min="0" step="${f[3]}" data-c="${c.k}" data-i="${f[0]}"></div>`).join('')}</div><p>Ciclo típico do contrato: ${c.cy}.</p>${c.ilus?'<p class="w">Valores iniciais ilustrativos: confirme com o mercado local antes de apresentar.</p>':''}</article>`).join('');
+function fill(){$$('[data-g]').forEach(i=>{if(i.id!=='focus')i.value=S.g[i.dataset.g]});$$('[data-c]').forEach(i=>i.value=S.v[i.dataset.c][i.dataset.i]);$$('[data-on]').forEach(i=>i.checked=S.on[i.dataset.on])}
+function calc(){const a=(+S.g.area||0)*U[S.g.unit],y=Math.max(1,Math.round(+S.g.years)||1),e=(+S.g.esc||0)/100;let fc=0;for(let i=0;i<y;i++)fc+=(1+e)**i;
+ const rows=C.filter(c=>S.on[c.k]).map(c=>{const x=S.v[c.k],aH=Math.max(0,c.v(x)||0);return{c,x,aH,mH:aH/12,ar:aH*a,tot:aH*a*fc}}).sort((p,q)=>q.aH-p.aH);return{a,y,e,rows}}
+const pl=y=>y>1?'anos':'ano';
+function upd(){try{localStorage.setItem('arr1',JSON.stringify(S))}catch{}
+ const r=calc(),w=r.rows[0],mx=w?w.aH||1:1;
+ $('#hint').textContent=`Área considerada nos cálculos: ${N(r.a)} hectares`;
+ C.forEach(c=>{$('#c-'+c.k).classList.toggle('on',!!S.on[c.k]);const z=r.rows.find(q=>q.c===c);$('#r-'+c.k).textContent=z?R(z.aH)+'/ha/ano':'fora da comparação'});
+ if(!r.rows.some(z=>z.c.k===S.g.focus))S.g.focus='best';
+ $('#focus').innerHTML='<option value="best">Melhor resultado (automático)</option>'+r.rows.map(z=>`<option value="${z.c.k}">${z.c.n}</option>`).join('');$('#focus').value=S.g.focus;
+ $('#win').innerHTML=w?`<span>Maior arrendamento estimado</span><strong>${w.c.e} ${w.c.n}</strong><span>${R(w.aH)} por hectare ao ano · ${R(w.mH)} por hectare ao mês<br>${R(w.ar)} por ano na área · ${R(w.tot)} em ${r.y} ${pl(r.y)}</span>`:'<strong>Marque ao menos uma cultura</strong>';
+ $('#bars').innerHTML=r.rows.map((z,i)=>`<div class="bar ${i?'':'b'}"><b>${z.c.e} ${z.c.n}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}</strong></div>`).join('');
+ $('#thp').textContent=`Total em ${r.y} ${pl(r.y)}`;
+ $('#tbl').innerHTML=r.rows.map(z=>`<tr><td><b>${z.c.e} ${z.c.n}</b></td><td>${R(z.mH)}</td><td>${R(z.aH)}</td><td>${R(z.ar)}</td><td>${R(z.tot)}</td></tr>`).join('');
+ $('#dkt').innerHTML=w?`<b>${w.c.n}: ${R(w.aH)}/ha/ano</b>${R(w.ar)} por ano na área`:'Marque uma cultura';}
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.g)S.g[t.dataset.g]=t.value;else if(t.dataset.c)S.v[t.dataset.c][t.dataset.i]=t.value;else if(t.dataset.on)S.on[t.dataset.on]=t.checked;else return;upd()});
+$('#rst').onclick=()=>{if(confirm('Restaurar todos os valores de referência?')){S=D();fill();upd()}};
+function deck(){const r=calc();if(!r.rows.length){alert('Marque ao menos uma cultura.');return}
+ const g=S.g,f=r.rows.find(z=>z.c.k===g.focus)||r.rows[0],mx=r.rows[0].aH||1,p=pl(r.y),n=r.rows.length,
+ dt=g.date?new Date(g.date+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'',
+ H=(i,b)=>`<section class="sl"><div class="br">Ipiranga Agroindustrial · Parcerias</div>${b}<div class="ft">${i} de 5 · Valores estimados com cotações de ${dt}. Não constituem oferta firme.</div></section>`;
+ $('#deck').innerHTML=[
+ `<h1>Proposta de arrendamento rural</h1><p>Preparada para <b>${E(g.client)||'você'}</b></p><p>${E(g.property)} · ${E(g.region)}</p><p>${dt}</p>`,
+ `<h2>A sua área</h2><div class="big">${N(r.a)} ha</div><p>${E(g.property)}, em ${E(g.region)}. Avaliamos ${n} ${n>1?'culturas':'cultura'} para um contrato de ${r.y} ${p}${r.e?`, com reajuste de ${N(g.esc)}% ao ano`:''}.</p>`,
+ `<h2>${f.c.e} ${f.c.n}: o que a sua terra pode render</h2><div class="big">${R(f.aH)}</div><p>por hectare ao ano · ${E(f.c.b(f.x))}</p><div class="row"><div><b>${R(f.mH)}</b><span>por hectare ao mês</span></div><div><b>${R(f.ar)}</b><span>por ano na sua área</span></div><div><b>${R(f.tot)}</b><span>em ${r.y} ${p}</span></div></div>`,
+ `<h2>Comparativo entre culturas</h2><p>Arrendamento estimado por hectare ao ano</p><div>${r.rows.map(z=>`<div class="bar ${z===f?'b':''}"><b>${z.c.e} ${z.c.n}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}</strong></div>`).join('')}</div>`,
+ `<h2>Próximos passos</h2><ol><li>Confirmamos a área e as cotações atuais.</li><li>Alinhamos prazo, reajuste e forma de pagamento.</li><li>Formalizamos o contrato de arrendamento.</li></ol><p><b>${E(g.cons)}</b>${g.contact?' · '+E(g.contact):''}</p>`
+ ].map((b,i)=>H(i+1,b)).join('');
+ $('#dk').hidden=false;document.body.style.overflow='hidden';$('#deck').scrollLeft=0}
+const go=()=>$('#deck').scrollBy({left:0});
+const mv=d=>$('#deck').scrollBy({left:d*$('#deck').clientWidth});
+$('#go').onclick=$('#go2').onclick=deck;
+$('#cl').onclick=()=>{$('#dk').hidden=true;document.body.style.overflow=''};
+$('#pv').onclick=()=>mv(-1);$('#nx').onclick=()=>mv(1);$('#pdf').onclick=()=>window.print();
+addEventListener('keydown',e=>{if($('#dk').hidden)return;if(e.key==='ArrowRight')mv(1);if(e.key==='ArrowLeft')mv(-1);if(e.key==='Escape')$('#cl').click()});
+$('#wa').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
+ const t=`*Proposta de arrendamento rural*\n${g.property} — ${g.region}\nÁrea: ${N(r.a)} ha · Prazo: ${r.y} ${pl(r.y)}\n\n`+r.rows.map(z=>`${z.c.e} ${z.c.n}: ${R(z.aH)}/ha/ano → ${R(z.ar)}/ano na área`).join('\n')+`\n\nValores estimados, sujeitos a confirmação de cotações e contrato.\n${g.cons}${g.contact?' · '+g.contact:''}`;
+ window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
+$('#csv').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
+ const rows=[['Propriedade',g.property],['Município/UF',g.region],['Área (ha)',r.a],['Prazo (anos)',r.y],['Reajuste anual (%)',g.esc],[],['Cultura','R$/ha/mês','Arrendamento estimado R$/ha/ano','Total por ano na área (R$)','Total no período (R$)'],...r.rows.map(z=>[z.c.n,z.mH,z.aH,z.ar,z.tot])];
+ const csv=rows.map(w=>w.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='comparativo_arrendamento_rural.csv';a.click();URL.revokeObjectURL(a.href)};
+let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false});
+$('#inst').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;$('#inst').hidden=true}};
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+fill();upd();
+</script>
+</body>
+</html>
