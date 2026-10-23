@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Simulador de Arrendamento Rural</title>
+<title>ArrendaAgro</title>
 <meta name="theme-color" content="#0C2E22">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -68,18 +68,17 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 </head>
 <body>
 <header class="top">
- <div class="brand"><b>Arrendamento rural</b><span>Ipiranga Agroindustrial · Parcerias</span></div>
+ <div class="brand"><b>ArrendaAgro</b><span>Simulador de arrendamento rural</span></div>
  <div><button class="ghost" id="inst" hidden>Instalar app</button><button class="ghost" id="rst">Restaurar valores</button></div>
 </header>
 <main>
  <section>
   <h2>Sobre a área</h2><p class="lead">Preencha os dados da propriedade. Tudo é calculado na hora e salvo neste aparelho.</p>
   <div class="card"><div class="grid">
-   <div class="f"><label>Propriedade ou cenário</label><input data-g="property"></div>
-   <div class="f"><label>Município / UF</label><input data-g="region"></div>
+   <div class="f"><label>Propriedade ou cenário</label><input data-g="property" placeholder="Nome da propriedade"></div>
+   <div class="f"><label>Município / UF</label><input data-g="region" placeholder="Cidade — UF"></div>
    <div class="f"><label>Unidade da área</label><select data-g="unit"><option value="ha">Hectares (ha)</option><option value="alq">Alqueire paulista (2,42 ha)</option><option value="alqm">Alqueire mineiro (4,84 ha)</option></select></div>
    <div class="f"><label>Tamanho da área</label><input data-g="area" type="number" inputmode="decimal" min="0" step="0.01"></div>
-   <div class="f"><label>Período do arrendamento (anos)</label><input data-g="years" type="number" inputmode="numeric" min="1" step="1"></div>
    <div class="f"><label>Reajuste anual do contrato (%)</label><input data-g="esc" type="number" inputmode="decimal" min="0" step="0.1"></div>
    <div class="f"><label>Data das cotações usadas</label><input data-g="date" type="date"></div>
   </div><p class="hint" id="hint"></p></div>
@@ -92,15 +91,15 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
   <h2>Resultado</h2><p class="lead">Valor bruto estimado de arrendamento, antes de impostos e despesas.</p>
   <div class="win" id="win"></div>
   <div class="card"><div id="bars"></div>
-   <div class="tw"><table><thead><tr><th>Cultura</th><th>R$/ha/mês</th><th>Arrendamento estimado R$/ha/ano</th><th>Total por ano na área</th><th id="thp">Total no período</th></tr></thead><tbody id="tbl"></tbody></table></div>
+   <div class="tw"><table><thead><tr><th>Cultura</th><th>R$/ha/mês</th><th>Arrendamento estimado R$/ha/ano</th><th>Total por ano na área</th><th>Prazo</th><th>Total no prazo</th></tr></thead><tbody id="tbl"></tbody></table></div>
   </div>
  </section>
  <section>
   <h2>Apresentação</h2><p class="lead">Gera uma apresentação pronta para mostrar ao proprietário ou fornecedor.</p>
   <div class="card"><div class="grid">
-   <div class="f"><label>Nome do proprietário / fornecedor</label><input data-g="client" placeholder="Ex.: Sr. João da Silva"></div>
-   <div class="f"><label>Consultor</label><input data-g="cons"></div>
-   <div class="f"><label>Telefone ou e-mail para contato</label><input data-g="contact"></div>
+   <div class="f"><label>Nome do proprietário / fornecedor</label><input data-g="client" placeholder="Nome completo"></div>
+   <div class="f"><label>Consultor</label><input data-g="cons" placeholder="Seu nome"></div>
+   <div class="f"><label>Telefone ou e-mail para contato</label><input data-g="contact" placeholder="(00) 00000-0000"></div>
    <div class="f"><label>Cultura em destaque</label><select data-g="focus" id="focus"></select></div>
   </div>
   <div class="btns"><button class="gold" id="go">Gerar apresentação</button><button class="alt" id="wa">Enviar resumo por WhatsApp</button><button class="alt" id="csv">Exportar planilha (CSV)</button></div></div>
@@ -124,36 +123,36 @@ const C=[
  S2('banana','Banana','🍌','Preço: mercado local / CEPEA Hortifruti','4 a 5 anos','Arrendamento estimado (caixas de 20 kg/ha/ano)',350,10,'Preço da caixa (R$)',20,.5,'cx/ha/ano','cx',true),
  S2('cafe','Café','☕','Preço: CEPEA/ESALQ (arábica)','Vários anos (lavoura permanente)','Arrendamento estimado (sacas de 60 kg/ha/ano)',8,.5,'Preço da saca (R$)',1500,10,'sc/ha/ano','sc',true)
 ];
-const D=()=>({g:{property:'Área rural — estudo preliminar',region:'Passos — MG',unit:'ha',area:25,years:1,esc:0,date:new Date().toISOString().slice(0,10),client:'',cons:'Luís Duarte',contact:'',focus:'best'},on:Object.fromEntries(C.map(c=>[c.k,true])),v:Object.fromEntries(C.map(c=>[c.k,Object.fromEntries(c.f.map(f=>[f[0],f[2]]))]))});
-let S;try{const d=D(),s=JSON.parse(localStorage.getItem('arr1')||'{}');S={g:{...d.g,...s.g},on:{...d.on,...s.on},v:Object.fromEntries(C.map(c=>[c.k,{...d.v[c.k],...(s.v||{})[c.k]}]))}}catch{S=D()}
+const YD={cana:5,soja:1,milho:1,pec:3,banana:4,cafe:15};C.forEach(c=>c.f.push(['y','Período do arrendamento (anos)',YD[c.k],1]));
+const D=()=>({g:{property:'',region:'',unit:'ha',area:25,esc:0,date:new Date().toISOString().slice(0,10),client:'',cons:'',contact:'',focus:'best'},on:Object.fromEntries(C.map(c=>[c.k,true])),v:Object.fromEntries(C.map(c=>[c.k,Object.fromEntries(c.f.map(f=>[f[0],f[2]]))]))});
+let S;try{const d=D(),s=JSON.parse(localStorage.getItem('arr2')||'{}');S={g:{...d.g,...s.g},on:{...d.on,...s.on},v:Object.fromEntries(C.map(c=>[c.k,{...d.v[c.k],...(s.v||{})[c.k]}]))}}catch{S=D()}
 $('#cults').innerHTML=C.map(c=>`<article class="cc" id="c-${c.k}"><label class="hd"><input type="checkbox" data-on="${c.k}"><span class="em">${c.e}</span><span><b>${c.n}</b><small>${c.ref}</small></span><span class="rs" id="r-${c.k}"></span></label><div class="fl">${c.f.map(f=>`<div class="f"><label>${f[1]}</label><input type="number" inputmode="decimal" min="0" step="${f[3]}" data-c="${c.k}" data-i="${f[0]}"></div>`).join('')}</div><p>Ciclo típico do contrato: ${c.cy}.</p>${c.ilus?'<p class="w">Valores iniciais ilustrativos: confirme com o mercado local antes de apresentar.</p>':''}</article>`).join('');
 function fill(){$$('[data-g]').forEach(i=>{if(i.id!=='focus')i.value=S.g[i.dataset.g]});$$('[data-c]').forEach(i=>i.value=S.v[i.dataset.c][i.dataset.i]);$$('[data-on]').forEach(i=>i.checked=S.on[i.dataset.on])}
-function calc(){const a=(+S.g.area||0)*U[S.g.unit],y=Math.max(1,Math.round(+S.g.years)||1),e=(+S.g.esc||0)/100;let fc=0;for(let i=0;i<y;i++)fc+=(1+e)**i;
- const rows=C.filter(c=>S.on[c.k]).map(c=>{const x=S.v[c.k],aH=Math.max(0,c.v(x)||0);return{c,x,aH,mH:aH/12,ar:aH*a,tot:aH*a*fc}}).sort((p,q)=>q.aH-p.aH);return{a,y,e,rows}}
+function calc(){const a=(+S.g.area||0)*U[S.g.unit],e=(+S.g.esc||0)/100;
+ const rows=C.filter(c=>S.on[c.k]).map(c=>{const x=S.v[c.k],aH=Math.max(0,c.v(x)||0),y=Math.max(1,Math.round(+x.y)||1);let fc=0;for(let i=0;i<y;i++)fc+=(1+e)**i;return{c,x,y,aH,mH:aH/12,ar:aH*a,tot:aH*a*fc}}).sort((p,q)=>q.aH-p.aH);return{a,e,rows}}
 const pl=y=>y>1?'anos':'ano';
-function upd(){try{localStorage.setItem('arr1',JSON.stringify(S))}catch{}
+function upd(){try{localStorage.setItem('arr2',JSON.stringify(S))}catch{}
  const r=calc(),w=r.rows[0],mx=w?w.aH||1:1;
  $('#hint').textContent=`Área considerada nos cálculos: ${N(r.a)} hectares`;
  C.forEach(c=>{$('#c-'+c.k).classList.toggle('on',!!S.on[c.k]);const z=r.rows.find(q=>q.c===c);$('#r-'+c.k).textContent=z?R(z.aH)+'/ha/ano':'fora da comparação'});
  if(!r.rows.some(z=>z.c.k===S.g.focus))S.g.focus='best';
  $('#focus').innerHTML='<option value="best">Melhor resultado (automático)</option>'+r.rows.map(z=>`<option value="${z.c.k}">${z.c.n}</option>`).join('');$('#focus').value=S.g.focus;
- $('#win').innerHTML=w?`<span>Maior arrendamento estimado</span><strong>${w.c.e} ${w.c.n}</strong><span>${R(w.aH)} por hectare ao ano · ${R(w.mH)} por hectare ao mês<br>${R(w.ar)} por ano na área · ${R(w.tot)} em ${r.y} ${pl(r.y)}</span>`:'<strong>Marque ao menos uma cultura</strong>';
- $('#bars').innerHTML=r.rows.map((z,i)=>`<div class="bar ${i?'':'b'}"><b>${z.c.e} ${z.c.n}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}</strong></div>`).join('');
- $('#thp').textContent=`Total em ${r.y} ${pl(r.y)}`;
- $('#tbl').innerHTML=r.rows.map(z=>`<tr><td><b>${z.c.e} ${z.c.n}</b></td><td>${R(z.mH)}</td><td>${R(z.aH)}</td><td>${R(z.ar)}</td><td>${R(z.tot)}</td></tr>`).join('');
+ $('#win').innerHTML=w?`<span>Maior arrendamento estimado</span><strong>${w.c.e} ${w.c.n}</strong><span>${R(w.aH)} por hectare ao ano · ${R(w.mH)} por hectare ao mês<br>${R(w.ar)} por ano na área · ${R(w.tot)} em ${w.y} ${pl(w.y)}</span>`:'<strong>Marque ao menos uma cultura</strong>';
+ $('#bars').innerHTML=r.rows.map((z,i)=>`<div class="bar ${i?'':'b'}"><b>${z.c.e} ${z.c.n} · ${z.y} ${pl(z.y)}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}</strong></div>`).join('');
+ $('#tbl').innerHTML=r.rows.map(z=>`<tr><td><b>${z.c.e} ${z.c.n}</b></td><td>${R(z.mH)}</td><td>${R(z.aH)}</td><td>${R(z.ar)}</td><td>${z.y} ${pl(z.y)}</td><td>${R(z.tot)}</td></tr>`).join('');
  $('#dkt').innerHTML=w?`<b>${w.c.n}: ${R(w.aH)}/ha/ano</b>${R(w.ar)} por ano na área`:'Marque uma cultura';}
 document.addEventListener('input',e=>{const t=e.target;if(t.dataset.g)S.g[t.dataset.g]=t.value;else if(t.dataset.c)S.v[t.dataset.c][t.dataset.i]=t.value;else if(t.dataset.on)S.on[t.dataset.on]=t.checked;else return;upd()});
 $('#rst').onclick=()=>{if(confirm('Restaurar todos os valores de referência?')){S=D();fill();upd()}};
 function deck(){const r=calc();if(!r.rows.length){alert('Marque ao menos uma cultura.');return}
- const g=S.g,f=r.rows.find(z=>z.c.k===g.focus)||r.rows[0],mx=r.rows[0].aH||1,p=pl(r.y),n=r.rows.length,
+ const g=S.g,f=r.rows.find(z=>z.c.k===g.focus)||r.rows[0],mx=r.rows[0].aH||1,n=r.rows.length,loc=[g.property,g.region].filter(Boolean).map(E).join(' · '),
  dt=g.date?new Date(g.date+'T12:00:00').toLocaleDateString('pt-BR',{day:'numeric',month:'long',year:'numeric'}):'',
- H=(i,b)=>`<section class="sl"><div class="br">Ipiranga Agroindustrial · Parcerias</div>${b}<div class="ft">${i} de 5 · Valores estimados com cotações de ${dt}. Não constituem oferta firme.</div></section>`;
+ H=(i,b)=>`<section class="sl"><div class="br">ArrendaAgro</div>${b}<div class="ft">${i} de 5 · Valores estimados com cotações de ${dt}. Não constituem oferta firme.</div></section>`;
  $('#deck').innerHTML=[
- `<h1>Proposta de arrendamento rural</h1><p>Preparada para <b>${E(g.client)||'você'}</b></p><p>${E(g.property)} · ${E(g.region)}</p><p>${dt}</p>`,
- `<h2>A sua área</h2><div class="big">${N(r.a)} ha</div><p>${E(g.property)}, em ${E(g.region)}. Avaliamos ${n} ${n>1?'culturas':'cultura'} para um contrato de ${r.y} ${p}${r.e?`, com reajuste de ${N(g.esc)}% ao ano`:''}.</p>`,
- `<h2>${f.c.e} ${f.c.n}: o que a sua terra pode render</h2><div class="big">${R(f.aH)}</div><p>por hectare ao ano · ${E(f.c.b(f.x))}</p><div class="row"><div><b>${R(f.mH)}</b><span>por hectare ao mês</span></div><div><b>${R(f.ar)}</b><span>por ano na sua área</span></div><div><b>${R(f.tot)}</b><span>em ${r.y} ${p}</span></div></div>`,
- `<h2>Comparativo entre culturas</h2><p>Arrendamento estimado por hectare ao ano</p><div>${r.rows.map(z=>`<div class="bar ${z===f?'b':''}"><b>${z.c.e} ${z.c.n}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}</strong></div>`).join('')}</div>`,
- `<h2>Próximos passos</h2><ol><li>Confirmamos a área e as cotações atuais.</li><li>Alinhamos prazo, reajuste e forma de pagamento.</li><li>Formalizamos o contrato de arrendamento.</li></ol><p><b>${E(g.cons)}</b>${g.contact?' · '+E(g.contact):''}</p>`
+ `<h1>Proposta de arrendamento rural</h1><p>Preparada para <b>${E(g.client)||'você'}</b></p><p>${loc}</p><p>${dt}</p>`,
+ `<h2>A sua área</h2><div class="big">${N(r.a)} ha</div><p>${loc?loc+'. ':''}Avaliamos ${n} ${n>1?'culturas':'cultura'}, cada uma com o seu prazo de contrato${r.e?`, com reajuste de ${N(g.esc)}% ao ano`:''}.</p>`,
+ `<h2>${f.c.e} ${f.c.n}: o que a sua terra pode render</h2><div class="big">${R(f.aH)}</div><p>por hectare ao ano · ${E(f.c.b(f.x))}</p><div class="row"><div><b>${R(f.mH)}</b><span>por hectare ao mês</span></div><div><b>${R(f.ar)}</b><span>por ano na sua área</span></div><div><b>${R(f.tot)}</b><span>em ${f.y} ${pl(f.y)}</span></div></div>`,
+ `<h2>Comparativo entre culturas</h2><p>Arrendamento estimado por hectare ao ano</p><div>${r.rows.map(z=>`<div class="bar ${z===f?'b':''}"><b>${z.c.e} ${z.c.n} · ${z.y} ${pl(z.y)}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}</strong></div>`).join('')}</div>`,
+ `<h2>Próximos passos</h2><ol><li>Confirmamos a área e as cotações atuais.</li><li>Alinhamos prazo, reajuste e forma de pagamento.</li><li>Formalizamos o contrato de arrendamento.</li></ol><p><b>${E(g.cons)}</b>${g.cons&&g.contact?' · ':''}${E(g.contact)}</p>`
  ].map((b,i)=>H(i+1,b)).join('');
  $('#dk').hidden=false;document.body.style.overflow='hidden';$('#deck').scrollLeft=0}
 const go=()=>$('#deck').scrollBy({left:0});
@@ -163,10 +162,10 @@ $('#cl').onclick=()=>{$('#dk').hidden=true;document.body.style.overflow=''};
 $('#pv').onclick=()=>mv(-1);$('#nx').onclick=()=>mv(1);$('#pdf').onclick=()=>window.print();
 addEventListener('keydown',e=>{if($('#dk').hidden)return;if(e.key==='ArrowRight')mv(1);if(e.key==='ArrowLeft')mv(-1);if(e.key==='Escape')$('#cl').click()});
 $('#wa').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
- const t=`*Proposta de arrendamento rural*\n${g.property} — ${g.region}\nÁrea: ${N(r.a)} ha · Prazo: ${r.y} ${pl(r.y)}\n\n`+r.rows.map(z=>`${z.c.e} ${z.c.n}: ${R(z.aH)}/ha/ano → ${R(z.ar)}/ano na área`).join('\n')+`\n\nValores estimados, sujeitos a confirmação de cotações e contrato.\n${g.cons}${g.contact?' · '+g.contact:''}`;
+ const t=`*Proposta de arrendamento rural*\n${[g.property,g.region].filter(Boolean).join(' — ')}\nÁrea: ${N(r.a)} ha\n\n`+r.rows.map(z=>`${z.c.e} ${z.c.n}: ${R(z.aH)}/ha/ano → ${R(z.ar)}/ano na área · ${z.y} ${pl(z.y)}`).join('\n')+`\n\nValores estimados, sujeitos a confirmação de cotações e contrato.\n${[g.cons,g.contact].filter(Boolean).join(' · ')}`;
  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
 $('#csv').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
- const rows=[['Propriedade',g.property],['Município/UF',g.region],['Área (ha)',r.a],['Prazo (anos)',r.y],['Reajuste anual (%)',g.esc],[],['Cultura','R$/ha/mês','Arrendamento estimado R$/ha/ano','Total por ano na área (R$)','Total no período (R$)'],...r.rows.map(z=>[z.c.n,z.mH,z.aH,z.ar,z.tot])];
+ const rows=[['Propriedade',g.property],['Município/UF',g.region],['Área (ha)',r.a],['Reajuste anual (%)',g.esc],[],['Cultura','R$/ha/mês','Arrendamento estimado R$/ha/ano','Total por ano na área (R$)','Prazo (anos)','Total no prazo (R$)'],...r.rows.map(z=>[z.c.n,z.mH,z.aH,z.ar,z.y,z.tot])];
  const csv=rows.map(w=>w.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='comparativo_arrendamento_rural.csv';a.click();URL.revokeObjectURL(a.href)};
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false});
