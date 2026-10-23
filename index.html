@@ -8,8 +8,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png?v=2">
+<link rel="apple-touch-icon" href="icon-192.png?v=2">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
 <style>
@@ -116,10 +116,10 @@ const E=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;
 const U={ha:1,alq:2.42,alqm:4.84};
 const S2=(k,n,e,ref,cy,qL,q,qs,pL,p,ps,u,pu,ilus,mul=1)=>({k,n,e,ref,cy,ilus,f:[['q',qL,q,qs],['p',pL,p,ps]],v:x=>x.q*x.p*mul,b:x=>`${N(x.q)} ${u} × ${R(+x.p)}/${pu}`});
 const C=[
- {k:'cana',n:'Cana-de-açúcar',e:'🌾',ref:'Preço do ATR: CONSECANA-SP',cy:'5 a 6 anos (ciclo de cortes)',f:[['atr','Preço do ATR (R$/kg)',1,.01],['t','Arrendamento estimado (t de cana/ha/ano)',19,1],['kg','ATR estimado (kg/t de cana)',120,1]],v:x=>x.atr*x.t*x.kg,b:x=>`${N(x.t)} t/ha/ano × ${N(x.kg)} kg ATR/t × ${R(+x.atr)}/kg ATR`},
+ {k:'cana',n:'Cana-de-açúcar',e:'🌾',ref:'Preço do ATR: CONSECANA-SP',cy:'5 a 6 anos (ciclo de cortes)',f:[['atr','PREÇO DO VATR (R$/kg)',1,.01],['t','Arrendamento estimado (t de cana/ha/ano)',19,1],['kg','ATR estimado (kg/t de cana)',120,1]],v:x=>x.atr*x.t*x.kg,b:x=>`${N(x.t)} t/ha/ano × ${N(x.kg)} kg ATR/t × ${R(+x.atr)}/kg ATR`},
  S2('soja','Soja','🫘','Preço: CEPEA/ESALQ','1 safra, renovável a cada ano','Arrendamento estimado (sacas de 60 kg/ha/ano)',20,.5,'Preço da saca (R$)',140,1,'sc/ha/ano','sc'),
  S2('milho','Milho','🌽','Preço: CEPEA/ESALQ','1 safra, renovável a cada ano','Arrendamento estimado (sacas de 60 kg/ha/ano)',38,.5,'Preço da saca (R$)',60,1,'sc/ha/ano','sc'),
- {k:'pec',n:'Pecuária a pasto',e:'🐂',ref:'Preço: CEPEA/ESALQ',cy:'3 anos ou mais',f:[['q','Arrendamento estimado (arrobas/ha/mês)',1.5,.1],['p','Valor da arroba (R$)',370,1],['pc','Parte da arroba destinada ao arrendamento (%)',10,1]],v:x=>x.q*x.p*x.pc/100*12,b:x=>`${N(x.q)} @/ha/mês × ${R(+x.p)}/@ × ${N(x.pc)}%`,ro:x=>`Valor da arroba de arrendo: ${R(x.p*x.pc/100)} · Arrendamento: ${R(x.q*x.p*x.pc/100)} por hectare ao mês`},
+ {k:'pec',n:'Pecuária a pasto',e:'🐂',ref:'Preço: CEPEA/ESALQ',cy:'3 anos ou mais',f:[['q','Cabeças de gado por hectare',1.5,.1],['p','Valor da arroba (R$)',370,1],['pc','Percentual da arroba aplicado ao arrendamento (%)',10,1]],v:x=>x.q*x.p*x.pc/100*12,b:x=>`${N(x.q)} cabeças/ha × ${R(+x.p)}/@ × ${N(x.pc)}%`,ro:x=>`Valor da arroba de arrendo: ${R(x.p*x.pc/100)} · Arrendamento: ${R(x.q*x.p*x.pc/100)} por hectare ao mês`},
  {k:'banana',n:'Banana',e:'🍌',ref:'Valor definido pelo consultor',cy:'4 a 5 anos',f:[['h','Valor do arrendamento (R$ por hectare/ano)',9600,100]],v:x=>+x.h,b:x=>`valor fixo de ${R(+x.h)} por hectare ao ano`,ro:x=>`Equivale a ${R(x.h/12)} por hectare ao mês · ${R(x.h*2.42)} por alqueire paulista/ano · ${R(x.h*4.84)} por alqueire mineiro/ano`},
  S2('cafe','Café','☕','Preço: CEPEA/ESALQ (arábica)','Vários anos (lavoura permanente)','Arrendamento estimado (sacas de 60 kg/ha/ano)',8,.5,'Preço da saca (R$)',1500,10,'sc/ha/ano','sc',false)
 ];
