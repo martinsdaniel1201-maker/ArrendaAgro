@@ -78,19 +78,52 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 .ur em{font-size:11px;background:var(--gold);color:#1b1405;padding:1px 8px;border-radius:99px;font-style:normal;font-weight:700}
 .ua button.del{background:#b3261e;color:#fff}.ua{display:flex;gap:6px;flex-wrap:wrap}.ua button{padding:7px 11px;min-height:36px;font-size:12.5px}
 .top div:last-child{flex-wrap:wrap;justify-content:flex-end}
+
+.sl::before,.sl::after{content:"";flex:1 1 0}.sl{overflow-y:auto}.sl .bar strong{text-align:right}
+.dcb.p,.dcb.n{bottom:calc(12px + env(safe-area-inset-bottom))}.dcb.x,.dcb.pdf{top:calc(12px + env(safe-area-inset-top))}.dcb.pdf{right:96px}
+.br{top:calc(4vmin + env(safe-area-inset-top))}
+#gate::before,#gate::after{content:"";flex:1 0 8px}#gate{justify-content:flex-start}
+@media(max-width:600px){
+ main{padding:14px 12px 120px}
+ .top{padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top))}.brand b{font-size:18px}
+ h2{font-size:22px}.lead{font-size:13.5px}
+ .card{padding:14px;border-radius:16px}
+ .grid,.fl{grid-template-columns:1fr 1fr;gap:12px}.fl{padding:14px}
+ .f.w2{grid-column:1/-1}.fl .f:last-child:nth-child(odd),.grid .f:last-child:nth-child(odd){grid-column:1/-1}
+ .hd{flex-wrap:wrap;padding:12px 14px;gap:10px}.hd>span:nth-of-type(2){flex:1;min-width:0}
+ .hd .rs{flex:1 0 100%;margin:0;text-align:left;background:#fff;border-radius:10px;padding:8px 12px}
+ .cc p{padding:0 14px 12px}
+ .win{padding:18px;border-radius:18px}
+ .bar{grid-template-columns:1fr auto;grid-template-areas:"l v" "t t";gap:6px 10px;margin:14px 0}
+ .bar b{grid-area:l;font-size:13.5px}.bar strong{grid-area:v}.bar .trk{grid-area:t}
+ .tw{overflow:visible;margin-top:14px}table,thead,tbody,tr,td{display:block;width:100%;min-width:0}thead{display:none}
+ tr{border:1px solid var(--line);border-radius:14px;padding:6px 14px;margin:10px 0;background:#fff}
+ td{display:flex;justify-content:space-between;gap:12px;border:0;padding:7px 0;text-align:right;font-size:13.5px}
+ td::before{content:attr(data-l);color:var(--mut);font-weight:600;text-align:left}
+ td:first-child{font-size:15px;border-bottom:1px solid var(--line);margin-bottom:4px;justify-content:flex-start}td:first-child::before{content:none}
+ .btns button{flex:1 1 100%}
+ .dock{gap:10px}.dock .gold{flex:none;padding:12px 16px}
+ #ad,#sh{padding:max(16px,env(safe-area-inset-top)) 12px 24px}.ua{width:100%}.ua button{flex:1 1 calc(33% - 6px)}
+}
+@media(max-aspect-ratio:1/1){
+ .sl .bar{grid-template-columns:1fr auto;grid-template-areas:"l v" "t t";gap:1vmin 2vmin;margin:2.4vmin 0;font-size:max(13px,3.4vmin)}
+ .sl .bar b{grid-area:l}.sl .bar strong{grid-area:v}.sl .bar .trk{grid-area:t;height:2.6vmin}
+ .ft{bottom:calc(72px + env(safe-area-inset-bottom));font-size:10px}.row{grid-template-columns:1fr 1fr}
+ .sl h1{font-size:clamp(32px,10vmin,92px)}.sl .big{font-size:clamp(40px,14vmin,160px)}
+}
 </style>
 </head>
 <body class="locked">
 <header class="top">
  <div class="brand"><b>ArrendaAgro</b><span>Simulador de arrendamento rural</span></div>
- <div><button class="ghost" id="inst" hidden>Instalar app</button><button class="ghost" id="rst">Restaurar valores</button><button class="ghost" id="ac">Conta</button></div>
+ <div><button class="ghost" id="inst" hidden>Instalar app</button><button class="ghost" id="ac">Conta</button></div>
 </header>
 <main>
  <section>
   <h2>Sobre a área</h2><p class="lead">Preencha os dados da propriedade. Tudo é calculado na hora e salvo neste aparelho.</p>
   <div class="card"><div class="grid">
-   <div class="f"><label>Propriedade ou cenário</label><input data-g="property" placeholder="Nome da propriedade"></div>
-   <div class="f"><label>Município / UF</label><input data-g="region" placeholder="Cidade — UF"></div>
+   <div class="f w2"><label>Propriedade ou cenário</label><input data-g="property" placeholder="Nome da propriedade"></div>
+   <div class="f w2"><label>Município / UF</label><input data-g="region" placeholder="Cidade — UF"></div>
    <div class="f"><label>Unidade da área</label><select data-g="unit"><option value="ha">Hectares (ha)</option><option value="alq">Alqueire paulista (2,42 ha)</option><option value="alqm">Alqueire mineiro (4,84 ha)</option></select></div>
    <div class="f"><label>Tamanho da área</label><input data-g="area" type="number" inputmode="decimal" min="0" step="0.01"></div>
    <div class="f"><label>Reajuste anual do contrato (%)</label><input data-g="esc" type="number" inputmode="decimal" min="0" step="0.1"></div>
@@ -111,10 +144,10 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
  <section>
   <h2>Apresentação</h2><p class="lead">Gera uma apresentação pronta para mostrar ao proprietário ou fornecedor.</p>
   <div class="card"><div class="grid">
-   <div class="f"><label>Nome do proprietário / fornecedor</label><input data-g="client" placeholder="Nome completo"></div>
+   <div class="f w2"><label>Nome do proprietário / fornecedor</label><input data-g="client" placeholder="Nome completo"></div>
    <div class="f"><label>Consultor</label><input data-g="cons" placeholder="Seu nome"></div>
    <div class="f"><label>Telefone ou e-mail para contato</label><input data-g="contact" placeholder="(00) 00000-0000"></div>
-   <div class="f"><label>Cultura em destaque</label><select data-g="focus" id="focus"></select></div>
+   <div class="f w2"><label>Cultura em destaque</label><select data-g="focus" id="focus"></select></div>
   </div>
   <div class="btns"><button class="gold" id="go">Gerar apresentação</button><button class="alt" id="wa">Enviar resumo por WhatsApp</button><button class="alt" id="csv">Exportar planilha (CSV)</button></div></div>
   <div class="note"><b>Importante:</b> não existe um preço único de arrendamento para todo o Brasil. Os valores são estimativas para comparação, calculadas com as cotações que você informar. Antes de negociar, confirme preços, praça, forma de pagamento, índice de reajuste, prazo e responsabilidades sobre o solo e as benfeitorias. Não substitui avaliação agronômica nem análise jurídica do contrato.</div>
@@ -126,9 +159,9 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 <div id="gate"><img src="icon-192.png?v=4" alt=""><h1>ArrendaAgro</h1><p id="gp">Acesso restrito. Entre com o e-mail e a senha fornecidos pelo administrador.</p>
 <form id="lf"><div class="f"><label>E-mail</label><input id="le" type="email" autocomplete="username" required></div><div class="f"><label>Senha</label><input id="lp" type="password" autocomplete="current-password" required></div><div class="msg" id="lm"></div><button class="gold" id="lb">Entrar</button></form>
 <button class="gold" id="lr" hidden>Tentar de novo</button><button class="ghost" id="lo" hidden>Sair</button></div>
-<div id="sh" hidden><div class="card" style="max-width:420px;margin:auto"><h2 id="shn"></h2><p class="lead" id="she"></p><div class="btns" style="flex-direction:column"><button id="pw">Trocar minha senha</button><button class="alt" id="adm" hidden>Gerenciar acessos</button><button class="alt" id="out">Sair</button><button class="alt" id="shc">Fechar</button></div></div></div>
+<div id="sh" hidden><div class="card" style="max-width:420px;margin:auto"><h2 id="shn"></h2><p class="lead" id="she"></p><div class="btns" style="flex-direction:column"><button id="pw">Trocar minha senha</button><button class="alt" id="rst">Restaurar valores de referência</button><button class="alt" id="adm" hidden>Gerenciar acessos</button><button class="alt" id="out">Sair</button><button class="alt" id="shc">Fechar</button></div></div></div>
 <div id="ad" hidden><div style="max-width:760px;margin:auto"><div class="ah"><h2>Acessos</h2><button class="alt" id="adc">Fechar</button></div>
-<div class="card"><p class="lead">Adicionar usuário. A pessoa entra com o e-mail e a senha temporária que você definir.</p><div class="grid"><div class="f"><label>Nome</label><input id="an"></div><div class="f"><label>E-mail</label><input id="ae" type="email"></div><div class="f"><label>Senha temporária (mín. 8)</label><input id="ap" type="text" autocomplete="off"></div><div class="f"><label>Válido até (opcional)</label><input id="av" type="date"></div><div class="f" id="aw" hidden><label>Permissão</label><select id="aa"><option value="0">Usuário comum</option><option value="1">Administrador</option></select></div></div><div class="btns"><button class="gold" id="au">Adicionar usuário</button></div><p class="am" id="am"></p></div>
+<div class="card"><p class="lead">Adicionar usuário. A pessoa entra com o e-mail e a senha temporária que você definir.</p><div class="grid"><div class="f w2"><label>Nome</label><input id="an"></div><div class="f w2"><label>E-mail</label><input id="ae" type="email"></div><div class="f w2"><label>Senha temporária (mín. 8)</label><input id="ap" type="text" autocomplete="off"></div><div class="f"><label>Válido até (opcional)</label><input id="av" type="date"></div><div class="f" id="aw" hidden><label>Permissão</label><select id="aa"><option value="0">Usuário comum</option><option value="1">Administrador</option></select></div></div><div class="btns"><button class="gold" id="au">Adicionar usuário</button></div><p class="am" id="am"></p></div>
 <div class="card" style="margin-top:14px"><div id="al"></div></div></div></div>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -161,7 +194,7 @@ function upd(){try{localStorage.setItem('arr3',JSON.stringify(S))}catch{}
  $('#focus').innerHTML='<option value="best">Melhor resultado (automático)</option>'+r.rows.map(z=>`<option value="${z.c.k}">${z.c.n}</option>`).join('');$('#focus').value=S.g.focus;
  $('#win').innerHTML=w?`<span>Maior arrendamento estimado</span><strong>${w.c.e} ${w.c.n}</strong><span>${R(w.aH)} por hectare ao ano · ${R(w.mH)} por hectare ao mês<br>${R(w.mo)} por mês na área · ${R(w.ar)} por ano · ${R(w.tot)} em ${w.y} ${pl(w.y)}</span>`:'<strong>Marque ao menos uma cultura</strong>';
  $('#bars').innerHTML=r.rows.map((z,i)=>`<div class="bar ${i?'':'b'}"><b>${z.c.e} ${z.c.n} · ${z.y} ${pl(z.y)}</b><div class="trk"><i style="width:${Math.max(2,z.aH/mx*100)}%"></i></div><strong>${R(z.aH)}<small>${R(z.mo)} por mês na área</small></strong></div>`).join('');
- $('#tbl').innerHTML=r.rows.map(z=>`<tr><td><b>${z.c.e} ${z.c.n}</b></td><td>${R(z.mH)}</td><td>${R(z.aH)}</td><td>${R(z.mo)}</td><td>${R(z.ar)}</td><td>${z.y} ${pl(z.y)}</td><td>${R(z.tot)}</td></tr>`).join('');
+ $('#tbl').innerHTML=r.rows.map(z=>`<tr><td data-l="Cultura"><b>${z.c.e} ${z.c.n}</b></td><td data-l="Por hectare ao mês">${R(z.mH)}</td><td data-l="Por hectare ao ano">${R(z.aH)}</td><td data-l="Total por mês na área">${R(z.mo)}</td><td data-l="Total por ano na área">${R(z.ar)}</td><td data-l="Prazo">${z.y} ${pl(z.y)}</td><td data-l="Total no prazo">${R(z.tot)}</td></tr>`).join('');
  $('#dkt').innerHTML=w?`<b>${w.c.n}: ${R(w.aH)}/ha/ano</b>${R(w.mo)} por mês na área`:'Marque uma cultura';}
 document.addEventListener('input',e=>{const t=e.target;if(t.dataset.g)S.g[t.dataset.g]=t.value;else if(t.dataset.c)S.v[t.dataset.c][t.dataset.i]=t.value;else if(t.dataset.on)S.on[t.dataset.on]=t.checked;else return;upd()});
 $('#rst').onclick=()=>{if(confirm('Restaurar todos os valores de referência?')){S=D();fill();upd()}};
@@ -271,12 +304,15 @@ $('#ac').onclick=()=>$('#sh').hidden=false;$('#shc').onclick=()=>$('#sh').hidden
 $('#pw').onclick=async()=>{const p=prompt('Nova senha (mínimo 8 caracteres):');if(!p)return;if(p.length<8){alert('A senha precisa ter pelo menos 8 caracteres.');return}
  const {error}=await SB.auth.updateUser({password:p});alert(error?'Não foi possível trocar a senha.':'Senha alterada.')};
 const fe=async e=>{let m='Erro ao executar.';try{m=(await e.context.json()).erro||m}catch{}return m};
-async function ld(){const {data,error}=await SB.from('arrendaagro_acessos').select('*').order('criado_em',{ascending:false});
- if(error){$('#al').textContent='Não foi possível carregar a lista.';return}
+async function ld(){$('#al').textContent='Carregando…';let r;
+ try{await SB.auth.getSession();const q=()=>SB.from('arrendaagro_acessos').select('*').order('criado_em',{ascending:false});r=await q();
+  if(r.error&&/jwt|expired/i.test((r.error.message||'')+(r.error.code||''))){await SB.auth.refreshSession();r=await q()}}catch(e){r={error:e}}
+ const {data,error}=r;
+ if(error){$('#al').innerHTML='Não foi possível carregar a lista ('+E(error.message||error)+'). <button class="alt" data-a="r">Tentar de novo</button>';return}
  $('#al').innerHTML=data.map(u=>{const me=u.user_id===UID,d=`data-i="${u.user_id}" data-n="${E(u.nome||'')}" data-e="${E(u.email)}" data-c="${u.conta_criada_aqui?1:0}" data-s="${u.status}" data-ad="${u.is_admin?1:0}"`;
- return `<div class="ur"><div><b>${E(u.nome||u.email)}</b>${u.is_owner?' <em>dono</em>':u.is_admin?' <em>admin</em>':''}<small>${E(u.email)} · ${u.status==='ativo'?'ativo':'bloqueado'}${u.valido_ate?' · até '+fd(u.valido_ate):''}<br>Último acesso: ${u.ultimo_acesso?new Date(u.ultimo_acesso).toLocaleString('pt-BR'):'nunca'}</small></div><div class="ua"><button data-a="t" ${d}>${u.status==='ativo'?'Bloquear':'Ativar'}</button><button class="alt" data-a="v" ${d}>Validade</button><button class="alt" data-a="e" ${d}>Editar</button><button class="alt" data-a="s" ${d}>Nova senha</button>${ME.is_owner&&!u.is_owner?`<button class="alt" data-a="m" ${d}>${u.is_admin?'Remover admin':'Tornar admin'}</button>`:''}${me||u.is_owner?'':`<button class="del" data-a="x" ${d}>Excluir</button>`}</div></div>`}).join('')||'Nenhum usuário.'}
+ return `<div class="ur"><div><b>${E(u.nome||u.email)}</b>${u.is_owner?' <em>dono</em>':u.is_admin?' <em>admin</em>':''}<small>${E(u.email)} · ${u.status==='ativo'?'ativo':'bloqueado'}${u.valido_ate?' · até '+fd(u.valido_ate):''}<br>Último acesso: ${u.ultimo_acesso?new Date(u.ultimo_acesso).toLocaleString('pt-BR'):'nunca'}</small></div><div class="ua"><button data-a="t" ${d}>${u.status==='ativo'?'Bloquear':'Ativar'}</button><button class="alt" data-a="v" ${d}>Validade</button><button class="alt" data-a="e" ${d}>Editar</button><button class="alt" data-a="s" ${d}>Nova senha</button>${ME&&ME.is_owner&&!u.is_owner?`<button class="alt" data-a="m" ${d}>${u.is_admin?'Remover admin':'Tornar admin'}</button>`:''}${me||u.is_owner?'':`<button class="del" data-a="x" ${d}>Excluir</button>`}</div></div>`}).join('')||'Nenhum usuário.'}
 $('#adm').onclick=()=>{$('#sh').hidden=true;$('#ad').hidden=false;ld()};$('#adc').onclick=()=>$('#ad').hidden=true;
-$('#al').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const D=b.dataset,id=D.i,a=D.a;
+$('#al').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const D=b.dataset,id=D.i,a=D.a;if(a==='r')return ld();
  const call=async body=>{const {error}=await SB.functions.invoke('arrendaagro-admin',{body});if(error){alert(await fe(error));return false}return true};
  if(a==='t'){const ns=D.s==='ativo'?'bloqueado':'ativo';if(id===UID&&ns==='bloqueado'&&!confirm('Você vai bloquear o seu próprio acesso. Continuar?'))return;await SB.from('arrendaagro_acessos').update({status:ns}).eq('user_id',id)}
  if(a==='v'){const v=prompt('Válido até (AAAA-MM-DD). Deixe vazio para sem limite:');if(v===null)return;if(v&&!/^\d{4}-\d{2}-\d{2}$/.test(v)){alert('Use o formato AAAA-MM-DD.');return}await SB.from('arrendaagro_acessos').update({valido_ate:v||null}).eq('user_id',id)}
@@ -290,7 +326,7 @@ $('#au').onclick=async()=>{const m=$('#am');m.textContent='Salvando…';
  if(error){m.textContent=await fe(error);return}
  m.textContent=data.existente?'Acesso liberado. Esse e-mail já tinha conta: a pessoa entra com a senha que já usa.':'Usuário criado. Envie o e-mail e a senha temporária para a pessoa.';
  ['an','ae','ap','av'].forEach(i=>$('#'+i).value='');$('#aa').value='0';ld()};
-setInterval(()=>{if(ME&&navigator.onLine)chk()},3e5);addEventListener('online',()=>{if(!ME)chk()});
+setInterval(()=>{if(ME&&navigator.onLine)chk()},3e5);addEventListener('online',()=>{if(!ME)chk()});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)chk()});
 chk();
 </script>
 </body>
