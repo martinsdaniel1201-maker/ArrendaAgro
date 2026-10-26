@@ -76,7 +76,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 #ad,#sh{background:var(--bg)}.ah{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.ah h2{margin:0}
 .ur{display:flex;gap:10px;justify-content:space-between;align-items:center;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--line)}.ur small{display:block;color:var(--mut);font-size:12px;line-height:1.5}
 .ur em{font-size:11px;background:var(--gold);color:#1b1405;padding:1px 8px;border-radius:99px;font-style:normal;font-weight:700}
-.ua{display:flex;gap:6px;flex-wrap:wrap}.ua button{padding:7px 11px;min-height:36px;font-size:12.5px}
+.ua button.del{background:#b3261e;color:#fff}.ua{display:flex;gap:6px;flex-wrap:wrap}.ua button{padding:7px 11px;min-height:36px;font-size:12.5px}
 .top div:last-child{flex-wrap:wrap;justify-content:flex-end}
 </style>
 </head>
@@ -128,7 +128,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 <button class="gold" id="lr" hidden>Tentar de novo</button><button class="ghost" id="lo" hidden>Sair</button></div>
 <div id="sh" hidden><div class="card" style="max-width:420px;margin:auto"><h2 id="shn"></h2><p class="lead" id="she"></p><div class="btns" style="flex-direction:column"><button id="pw">Trocar minha senha</button><button class="alt" id="adm" hidden>Gerenciar acessos</button><button class="alt" id="out">Sair</button><button class="alt" id="shc">Fechar</button></div></div></div>
 <div id="ad" hidden><div style="max-width:760px;margin:auto"><div class="ah"><h2>Acessos</h2><button class="alt" id="adc">Fechar</button></div>
-<div class="card"><p class="lead">Adicionar usuário. A pessoa entra com o e-mail e a senha temporária que você definir.</p><div class="grid"><div class="f"><label>Nome</label><input id="an"></div><div class="f"><label>E-mail</label><input id="ae" type="email"></div><div class="f"><label>Senha temporária (mín. 8)</label><input id="ap" type="text" autocomplete="off"></div><div class="f"><label>Válido até (opcional)</label><input id="av" type="date"></div></div><div class="btns"><button class="gold" id="au">Adicionar usuário</button></div><p class="am" id="am"></p></div>
+<div class="card"><p class="lead">Adicionar usuário. A pessoa entra com o e-mail e a senha temporária que você definir.</p><div class="grid"><div class="f"><label>Nome</label><input id="an"></div><div class="f"><label>E-mail</label><input id="ae" type="email"></div><div class="f"><label>Senha temporária (mín. 8)</label><input id="ap" type="text" autocomplete="off"></div><div class="f"><label>Válido até (opcional)</label><input id="av" type="date"></div><div class="f" id="aw" hidden><label>Permissão</label><select id="aa"><option value="0">Usuário comum</option><option value="1">Administrador</option></select></div></div><div class="btns"><button class="gold" id="au">Adicionar usuário</button></div><p class="am" id="am"></p></div>
 <div class="card" style="margin-top:14px"><div id="al"></div></div></div></div>
 <script>
 const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
@@ -249,17 +249,17 @@ const SB=supabase.createClient('https://pmgemcvsobonypojltpw.supabase.co','sb_pu
 let ME=null,UID=null;
 const fd=s=>s?new Date(s+'T12:00:00').toLocaleDateString('pt-BR'):'';
 const gate=(m,t)=>{ME=null;$('#gate').hidden=false;document.body.classList.add('locked');$('#lf').hidden=m!=='lg';$('#lo').hidden=m==='lg';$('#lr').hidden=m!=='rt';$('#gp').textContent=t||'Acesso restrito. Entre com o e-mail e a senha fornecidos pelo administrador.'};
-const openApp=()=>{$('#gate').hidden=true;document.body.classList.remove('locked');$('#adm').hidden=!ME.is_admin;$('#shn').textContent='Olá, '+(ME.nome||'')};
+const openApp=()=>{$('#gate').hidden=true;document.body.classList.remove('locked');$('#adm').hidden=!ME.is_admin;$('#aw').hidden=!ME.is_owner;$('#shn').textContent='Olá, '+(ME.nome||'')};
 async function chk(){const {data:{session}}=await SB.auth.getSession();
  if(!session){gate('lg');return}
  UID=session.user.id;$('#she').textContent=session.user.email||'';
  const {data,error}=await SB.rpc('arrendaagro_meu_acesso');
  if(error){const g=JSON.parse(localStorage.getItem('arr_ok')||'null'),net=!navigator.onLine||/fetch|network|load failed/i.test(error.message||'');
-  if(net&&g&&g.u===UID&&Date.now()-g.t<2592e5){ME={nome:g.n,is_admin:g.a};openApp();return}
+  if(net&&g&&g.u===UID&&Date.now()-g.t<2592e5){ME={nome:g.n,is_admin:g.a,is_owner:g.o};openApp();return}
   gate(net?'rt':'dn',net?'Sem conexão. Conecte-se à internet para validar o acesso.':'Não foi possível validar o seu acesso agora. Tente novamente em instantes.');$('#lr').hidden=false;return}
  if(!data){gate('dn','Este usuário ainda não tem acesso ao app. Fale com o administrador.');return}
  if(!data.ok){localStorage.removeItem('arr_ok');gate('dn',data.status==='ativo'?'O seu acesso expirou. Fale com o administrador.':'O seu acesso foi bloqueado. Fale com o administrador.');return}
- ME=data;localStorage.setItem('arr_ok',JSON.stringify({u:UID,t:Date.now(),n:data.nome,a:data.is_admin}));openApp()}
+ ME=data;localStorage.setItem('arr_ok',JSON.stringify({u:UID,t:Date.now(),n:data.nome,a:data.is_admin,o:data.is_owner}));openApp()}
 $('#lf').onsubmit=async e=>{e.preventDefault();const b=$('#lb');b.disabled=true;$('#lm').textContent='';
  const {error}=await SB.auth.signInWithPassword({email:$('#le').value.trim(),password:$('#lp').value});b.disabled=false;
  if(error){$('#lm').textContent=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':'Não foi possível entrar. Verifique a conexão.';return}
@@ -273,18 +273,23 @@ $('#pw').onclick=async()=>{const p=prompt('Nova senha (mínimo 8 caracteres):');
 const fe=async e=>{let m='Erro ao executar.';try{m=(await e.context.json()).erro||m}catch{}return m};
 async function ld(){const {data,error}=await SB.from('arrendaagro_acessos').select('*').order('criado_em',{ascending:false});
  if(error){$('#al').textContent='Não foi possível carregar a lista.';return}
- $('#al').innerHTML=data.map(u=>`<div class="ur"><div><b>${E(u.nome||u.email)}</b>${u.is_admin?' <em>admin</em>':''}<small>${E(u.email)} · ${u.status==='ativo'?'ativo':'bloqueado'}${u.valido_ate?' · até '+fd(u.valido_ate):''}<br>Último acesso: ${u.ultimo_acesso?new Date(u.ultimo_acesso).toLocaleString('pt-BR'):'nunca'}</small></div><div class="ua"><button data-a="t" data-i="${u.user_id}" data-s="${u.status}">${u.status==='ativo'?'Bloquear':'Ativar'}</button><button class="alt" data-a="v" data-i="${u.user_id}">Validade</button><button class="alt" data-a="s" data-i="${u.user_id}">Nova senha</button></div></div>`).join('')||'Nenhum usuário.'}
+ $('#al').innerHTML=data.map(u=>{const me=u.user_id===UID,d=`data-i="${u.user_id}" data-n="${E(u.nome||'')}" data-e="${E(u.email)}" data-c="${u.conta_criada_aqui?1:0}" data-s="${u.status}" data-ad="${u.is_admin?1:0}"`;
+ return `<div class="ur"><div><b>${E(u.nome||u.email)}</b>${u.is_owner?' <em>dono</em>':u.is_admin?' <em>admin</em>':''}<small>${E(u.email)} · ${u.status==='ativo'?'ativo':'bloqueado'}${u.valido_ate?' · até '+fd(u.valido_ate):''}<br>Último acesso: ${u.ultimo_acesso?new Date(u.ultimo_acesso).toLocaleString('pt-BR'):'nunca'}</small></div><div class="ua"><button data-a="t" ${d}>${u.status==='ativo'?'Bloquear':'Ativar'}</button><button class="alt" data-a="v" ${d}>Validade</button><button class="alt" data-a="e" ${d}>Editar</button><button class="alt" data-a="s" ${d}>Nova senha</button>${ME.is_owner&&!u.is_owner?`<button class="alt" data-a="m" ${d}>${u.is_admin?'Remover admin':'Tornar admin'}</button>`:''}${me||u.is_owner?'':`<button class="del" data-a="x" ${d}>Excluir</button>`}</div></div>`}).join('')||'Nenhum usuário.'}
 $('#adm').onclick=()=>{$('#sh').hidden=true;$('#ad').hidden=false;ld()};$('#adc').onclick=()=>$('#ad').hidden=true;
-$('#al').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const id=b.dataset.i,a=b.dataset.a;
- if(a==='t'){const ns=b.dataset.s==='ativo'?'bloqueado':'ativo';if(id===UID&&ns==='bloqueado'&&!confirm('Você vai bloquear o seu próprio acesso. Continuar?'))return;await SB.from('arrendaagro_acessos').update({status:ns}).eq('user_id',id)}
+$('#al').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const D=b.dataset,id=D.i,a=D.a;
+ const call=async body=>{const {error}=await SB.functions.invoke('arrendaagro-admin',{body});if(error){alert(await fe(error));return false}return true};
+ if(a==='t'){const ns=D.s==='ativo'?'bloqueado':'ativo';if(id===UID&&ns==='bloqueado'&&!confirm('Você vai bloquear o seu próprio acesso. Continuar?'))return;await SB.from('arrendaagro_acessos').update({status:ns}).eq('user_id',id)}
  if(a==='v'){const v=prompt('Válido até (AAAA-MM-DD). Deixe vazio para sem limite:');if(v===null)return;if(v&&!/^\d{4}-\d{2}-\d{2}$/.test(v)){alert('Use o formato AAAA-MM-DD.');return}await SB.from('arrendaagro_acessos').update({valido_ate:v||null}).eq('user_id',id)}
- if(a==='s'){const p=prompt('Nova senha (mínimo 8 caracteres).\nAtenção: a conta é do projeto inteiro; se essa pessoa usa outro app dele, a senha muda lá também.');if(!p)return;const {error}=await SB.functions.invoke('arrendaagro-admin',{body:{acao:'senha',user_id:id,senha:p}});alert(error?await fe(error):'Senha alterada.')}
+ if(a==='s'){const p=prompt('Nova senha (mínimo 8 caracteres).\nAtenção: a conta é do projeto inteiro; se essa pessoa usa outro app dele, a senha muda lá também.');if(!p)return;if(await call({acao:'senha',user_id:id,senha:p}))alert('Senha alterada.')}
+ if(a==='e'){const n=prompt('Nome:',D.n);if(n===null)return;let em=D.e;if(D.c==='1'){const x=prompt('E-mail:',D.e);if(x===null)return;em=x}if(await call({acao:'editar',user_id:id,nome:n,email:em}))alert('Dados atualizados.')}
+ if(a==='m'){const on=D.ad!=='1';if(!confirm(on?'Dar acesso de administrador a '+D.n+'?':'Remover o acesso de administrador de '+D.n+'?'))return;await call({acao:'admin',user_id:id,admin:on})}
+ if(a==='x'){if(!confirm(D.c==='1'?'Excluir '+D.n+' permanentemente?\nA conta será apagada. Se ela tiver sido usada em outro app deste projeto, os dados de lá também serão apagados.':'Remover o acesso de '+D.n+' ao ArrendaAgro?\nA conta de login continua existindo.'))return;if(await call({acao:'excluir',user_id:id}))alert('Pronto.')}
  ld()};
 $('#au').onclick=async()=>{const m=$('#am');m.textContent='Salvando…';
- const {data,error}=await SB.functions.invoke('arrendaagro-admin',{body:{acao:'criar',nome:$('#an').value,email:$('#ae').value,senha:$('#ap').value,valido_ate:$('#av').value}});
+ const {data,error}=await SB.functions.invoke('arrendaagro-admin',{body:{acao:'criar',nome:$('#an').value,email:$('#ae').value,senha:$('#ap').value,valido_ate:$('#av').value,admin:$('#aa').value==='1'}});
  if(error){m.textContent=await fe(error);return}
  m.textContent=data.existente?'Acesso liberado. Esse e-mail já tinha conta: a pessoa entra com a senha que já usa.':'Usuário criado. Envie o e-mail e a senha temporária para a pessoa.';
- ['an','ae','ap','av'].forEach(i=>$('#'+i).value='');ld()};
+ ['an','ae','ap','av'].forEach(i=>$('#'+i).value='');$('#aa').value='0';ld()};
 setInterval(()=>{if(ME&&navigator.onLine)chk()},3e5);addEventListener('online',()=>{if(!ME)chk()});
 chk();
 </script>
