@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://pmgemcvsobonypojltpw.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>ArrendaAgro</title>
 <meta name="theme-color" content="#0C2E22">
@@ -88,7 +90,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
  .top{padding:12px 14px;padding-top:calc(12px + env(safe-area-inset-top))}.brand b{font-size:18px}
  h2{font-size:22px}.lead{font-size:13.5px}
  .card{padding:14px;border-radius:16px}
- .grid,.fl{grid-template-columns:1fr 1fr;gap:12px}.fl{padding:14px}
+ .grid,.fl{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.fl{padding:14px}
  .f.w2{grid-column:1/-1}.fl .f:last-child:nth-child(odd),.grid .f:last-child:nth-child(odd){grid-column:1/-1}
  .hd{flex-wrap:wrap;padding:12px 14px;gap:10px}.hd>span:nth-of-type(2){flex:1;min-width:0}
  .hd .rs{flex:1 0 100%;margin:0;text-align:left;background:#fff;border-radius:10px;padding:8px 12px}
@@ -111,6 +113,10 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
  .ft{bottom:calc(72px + env(safe-area-inset-bottom));font-size:10px}.row{grid-template-columns:1fr 1fr}
  .sl h1{font-size:clamp(32px,10vmin,92px)}.sl .big{font-size:clamp(40px,14vmin,160px)}
 }
+
+.f{min-width:0}input[type=date]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;max-width:100%;text-align:left;line-height:1.2}
+input[type=date]::-webkit-date-and-time-value{text-align:left;min-height:1.2em;margin:0}
+#pm{position:fixed;inset:0;z-index:60;background:#0C2E22d9;display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto}#pm[hidden]{display:none}#pf{width:min(420px,100%)}#pm .msg{color:#b3261e}
 </style>
 </head>
 <body class="locked">
@@ -159,6 +165,7 @@ input:focus,select:focus,button:focus-visible{outline:3px solid var(--gold2);out
 <div id="gate"><img src="icon-192.png?v=4" alt=""><h1>ArrendaAgro</h1><p id="gp">Acesso restrito. Entre com o e-mail e a senha fornecidos pelo administrador.</p>
 <form id="lf"><div class="f"><label>E-mail</label><input id="le" type="email" autocomplete="username" required></div><div class="f"><label>Senha</label><input id="lp" type="password" autocomplete="current-password" required></div><div class="msg" id="lm"></div><button class="gold" id="lb">Entrar</button></form>
 <button class="gold" id="lr" hidden>Tentar de novo</button><button class="ghost" id="lo" hidden>Sair</button></div>
+<div id="pm" hidden><form class="card" id="pf"><h2 id="pt"></h2><p class="lead" id="pn"></p><div class="f"><label>Nova senha (mín. 8)</label><input id="p1" type="password" autocomplete="new-password" required></div><div class="f" style="margin-top:12px"><label>Repita a senha</label><input id="p2" type="password" autocomplete="new-password" required></div><div class="msg" id="pe"></div><div class="btns"><button class="gold">Salvar</button><button type="button" class="alt" id="pc">Cancelar</button></div></form></div>
 <div id="sh" hidden><div class="card" style="max-width:420px;margin:auto"><h2 id="shn"></h2><p class="lead" id="she"></p><div class="btns" style="flex-direction:column"><button id="pw">Trocar minha senha</button><button class="alt" id="rst">Restaurar valores de referência</button><button class="alt" id="adm" hidden>Gerenciar acessos</button><button class="alt" id="out">Sair</button><button class="alt" id="shc">Fechar</button></div></div></div>
 <div id="ad" hidden><div style="max-width:760px;margin:auto"><div class="ah"><h2>Acessos</h2><button class="alt" id="adc">Fechar</button></div>
 <div class="card"><p class="lead">Adicionar usuário. A pessoa entra com o e-mail e a senha temporária que você definir.</p><div class="grid"><div class="f w2"><label>Nome</label><input id="an"></div><div class="f w2"><label>E-mail</label><input id="ae" type="email"></div><div class="f w2"><label>Senha temporária (mín. 8)</label><input id="ap" type="text" autocomplete="off"></div><div class="f"><label>Válido até (opcional)</label><input id="av" type="date"></div><div class="f" id="aw" hidden><label>Permissão</label><select id="aa"><option value="0">Usuário comum</option><option value="1">Administrador</option></select></div></div><div class="btns"><button class="gold" id="au">Adicionar usuário</button></div><p class="am" id="am"></p></div>
@@ -175,15 +182,16 @@ const C=[
  S2('soja','Soja','🫘','Preço: CEPEA/ESALQ','1 safra, renovável a cada ano','Arrendamento estimado (sacas de 60 kg/ha/ano)',20,.5,'Preço da saca (R$)',140,1,'sc/ha/ano','sc'),
  S2('milho','Milho','🌽','Preço: CEPEA/ESALQ','1 safra, renovável a cada ano','Arrendamento estimado (sacas de 60 kg/ha/ano)',38,.5,'Preço da saca (R$)',60,1,'sc/ha/ano','sc'),
  {k:'pec',n:'Pecuária a pasto',e:'🐂',ref:'Preço: CEPEA/ESALQ',cy:'3 anos ou mais',f:[['q','Cabeças de gado por hectare',1.5,.1],['p','Valor da arroba (R$)',370,1],['pc','Percentual da arroba aplicado ao arrendamento (%)',10,1]],v:x=>x.q*x.p*x.pc/100*12,b:x=>`${N(x.q)} cabeças/ha × ${R(+x.p)}/@ × ${N(x.pc)}%`,ro:x=>`Valor da arroba de arrendo: ${R(x.p*x.pc/100)} · Arrendamento: ${R(x.q*x.p*x.pc/100)} por hectare ao mês`},
- {k:'banana',n:'Banana',e:'🍌',ref:'Valor definido pelo consultor',cy:'4 a 5 anos',f:[['h','Valor do arrendamento (R$ por hectare/ano)',9600,100]],v:x=>+x.h,b:x=>`valor fixo de ${R(+x.h)} por hectare ao ano`,ro:x=>`Equivale a ${R(x.h/12)} por hectare ao mês · ${R(x.h*2.42)} por alqueire paulista/ano · ${R(x.h*4.84)} por alqueire mineiro/ano`},
+ {k:'banana',n:'Banana',e:'🍌',ref:'Valor definido pelo consultor',cy:'4 a 5 anos',f:[['h','Valor do arrendamento (R$ por hectare/ano)',3818,50]],v:x=>+x.h,b:x=>`valor fixo de ${R(+x.h)} por hectare ao ano`,ro:x=>`Equivale a ${R(x.h/12)} por hectare ao mês · ${R(x.h*2.42)} por alqueire paulista/ano · ${R(x.h*4.84)} por alqueire mineiro/ano`},
  S2('cafe','Café','☕','Preço: CEPEA/ESALQ (arábica)','Vários anos (lavoura permanente)','Arrendamento estimado (sacas de 60 kg/ha/ano)',8,.5,'Preço da saca (R$)',1500,10,'sc/ha/ano','sc',false)
 ];
 const YD={cana:1,soja:1,milho:1,pec:1,banana:4,cafe:15};C.forEach(c=>c.f.push(['y','Período do arrendamento (anos)',YD[c.k],1]));
-const D=()=>({g:{property:'',region:'',unit:'ha',area:25,esc:0,date:new Date().toISOString().slice(0,10),client:'',cons:'',contact:'',focus:'best'},on:Object.fromEntries(C.map(c=>[c.k,true])),v:Object.fromEntries(C.map(c=>[c.k,Object.fromEntries(c.f.map(f=>[f[0],f[2]]))]))});
+const D=()=>({g:{property:'',region:'',unit:'ha',area:25,esc:0,date:new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10),client:'',cons:'',contact:'',focus:'best'},on:Object.fromEntries(C.map(c=>[c.k,true])),v:Object.fromEntries(C.map(c=>[c.k,Object.fromEntries(c.f.map(f=>[f[0],f[2]]))]))});
 let S;try{const d=D(),s=JSON.parse(localStorage.getItem('arr3')||'{}');S={g:{...d.g,...s.g},on:{...d.on,...s.on},v:Object.fromEntries(C.map(c=>[c.k,{...d.v[c.k],...(s.v||{})[c.k]}]))}}catch{S=D()}
+if(String(S.v.banana.h)==='9600')S.v.banana.h=3818;
 $('#cults').innerHTML=C.map(c=>`<article class="cc" id="c-${c.k}"><label class="hd"><input type="checkbox" data-on="${c.k}"><span class="em">${c.e}</span><span><b>${c.n}</b><small>${c.ref}</small></span><span class="rs" id="r-${c.k}"></span></label><div class="fl">${c.f.map(f=>`<div class="f"><label>${f[1]}</label><input type="number" inputmode="decimal" min="0" step="${f[3]}" data-c="${c.k}" data-i="${f[0]}"></div>`).join('')}</div>${c.ro?`<p class="ro" id="o-${c.k}"></p>`:''}<p>Ciclo típico do contrato: ${c.cy}.</p>${c.ilus?'<p class="w">Valores iniciais ilustrativos: confirme com o mercado local antes de apresentar.</p>':''}</article>`).join('');
 function fill(){$$('[data-g]').forEach(i=>{if(i.id!=='focus')i.value=S.g[i.dataset.g]});$$('[data-c]').forEach(i=>i.value=S.v[i.dataset.c][i.dataset.i]);$$('[data-on]').forEach(i=>i.checked=S.on[i.dataset.on])}
-function calc(){const a=(+S.g.area||0)*U[S.g.unit],e=(+S.g.esc||0)/100;
+function calc(){const a=Math.max(0,+S.g.area||0)*U[S.g.unit],e=Math.min(1,Math.max(0,+S.g.esc||0)/100);
  const rows=C.filter(c=>S.on[c.k]).map(c=>{const x=S.v[c.k],aH=Math.max(0,c.v(x)||0),y=Math.max(1,Math.round(+x.y)||1);let fc=0;for(let i=0;i<y;i++)fc+=(1+e)**i;return{c,x,y,aH,mH:aH/12,ar:aH*a,mo:aH*a/12,tot:aH*a*fc}}).sort((p,q)=>q.aH-p.aH);return{a,e,rows}}
 const pl=y=>y>1?'anos':'ano';
 function upd(){try{localStorage.setItem('arr3',JSON.stringify(S))}catch{}
@@ -242,7 +250,7 @@ const bg=i=>{c.fillStyle='#0C2E22';c.fillRect(0,0,W,H);const gr=c.createRadialGr
 txt('ArrendaAgro',X,70,'600 22px '+SS,'#A9C9B8');txt(i+' de 5 · Valores estimados com cotações de '+dt+'. Não constituem oferta firme.',X,H-40,'400 16px '+SS,'#7FA791')};
 const T=[
 ()=>{const y=txt('Proposta de arrendamento rural',X,400,'600 104px '+SF,'#fff',1250,114)+70;const a='Preparada para ';c.font='400 34px '+SS;const w=c.measureText(a).width;
-txt(a,X,y,'400 34px '+SS,'#CFE6D9');txt(g.client||'você',X+w,y,'800 34px '+SS,'#fff');txt(loc,X,y+56,'400 34px '+SS,'#CFE6D9',1250,46);txt(dt,X,y+112,'400 34px '+SS,'#CFE6D9')},
+txt(a,X,y,'400 34px '+SS,'#CFE6D9');txt(g.client||'você',X+w,y,fit(g.client||'você',800,34,SS,W-2*X-w),'#fff');txt(loc,X,y+56,'400 34px '+SS,'#CFE6D9',1250,46);txt(dt,X,y+112,'400 34px '+SS,'#CFE6D9')},
 ()=>{txt('A sua área',X,330,'600 70px '+SF,'#fff');const b=N(r.a)+' ha';txt(b,X,560,fit(b,600,200,SF,W-2*X),'#E8C879');
 txt((loc?loc+'. ':'')+'Avaliamos '+n+' '+(n>1?'culturas':'cultura')+', cada uma com o seu prazo de contrato'+(r.e?', com reajuste de '+N(g.esc)+'% ao ano':'')+'.',X,650,'400 32px '+SS,'#CFE6D9',1150,46)},
 ()=>{txt(f.c.e+' '+f.c.n+': o que a sua terra pode render',X,250,'600 62px '+SF,'#fff',1600,72);const b=R(f.aH);txt(b,X,540,fit(b,600,170,SF,W-2*X),'#E8C879');
@@ -272,37 +280,43 @@ $('#wa').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
  window.open('https://wa.me/?text='+encodeURIComponent(t),'_blank')};
 $('#csv').onclick=()=>{const r=calc(),g=S.g;if(!r.rows.length)return;
  const rows=[['Propriedade',g.property],['Município/UF',g.region],['Área (ha)',r.a],['Reajuste anual (%)',g.esc],[],['Cultura','R$/ha/mês','Arrendamento estimado R$/ha/ano','Total por mês na área (R$)','Total por ano na área (R$)','Prazo (anos)','Total no prazo (R$)'],...r.rows.map(z=>[z.c.n,z.mH,z.aH,z.mo,z.ar,z.y,z.tot])];
- const csv=rows.map(w=>w.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const cs=v=>typeof v==='number'?String(Math.round(v*100)/100).replace('.',','):(/^[=+\-@\t\r]/.test(String(v??''))?"'"+v:String(v??''));
+ const csv=rows.map(w=>w.map(v=>'"'+cs(v).replace(/"/g,'""')+'"').join(';')).join('\r\n');
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='comparativo_arrendamento_rural.csv';a.click();URL.revokeObjectURL(a.href)};
 let dp;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('#inst').hidden=false});
 $('#inst').onclick=async()=>{if(dp){dp.prompt();await dp.userChoice;dp=null;$('#inst').hidden=true}};
 if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+$$('.f').forEach((f,i)=>{const l=f.querySelector('label'),n=f.querySelector('input,select');if(l&&n){n.id=n.id||'f'+i;l.htmlFor=n.id}});
 fill();upd();
 const SB=supabase.createClient('https://pmgemcvsobonypojltpw.supabase.co','sb_publishable_-CODM24Ee0uRXks-mCXf5Q__hn5vS6e',{auth:{storageKey:'arrendaagro-auth',persistSession:true,autoRefreshToken:true}});
 let ME=null,UID=null;
 const fd=s=>s?new Date(s+'T12:00:00').toLocaleDateString('pt-BR'):'';
 const gate=(m,t)=>{ME=null;$('#gate').hidden=false;document.body.classList.add('locked');$('#lf').hidden=m!=='lg';$('#lo').hidden=m==='lg';$('#lr').hidden=m!=='rt';$('#gp').textContent=t||'Acesso restrito. Entre com o e-mail e a senha fornecidos pelo administrador.'};
 const openApp=()=>{$('#gate').hidden=true;document.body.classList.remove('locked');$('#adm').hidden=!ME.is_admin;$('#aw').hidden=!ME.is_owner;$('#shn').textContent='Olá, '+(ME.nome||'')};
-async function chk(){const {data:{session}}=await SB.auth.getSession();
+async function chk(bg){const {data:{session}}=await SB.auth.getSession();
  if(!session){gate('lg');return}
  UID=session.user.id;$('#she').textContent=session.user.email||'';
  const {data,error}=await SB.rpc('arrendaagro_meu_acesso');
- if(error){const g=JSON.parse(localStorage.getItem('arr_ok')||'null'),net=!navigator.onLine||/fetch|network|load failed/i.test(error.message||'');
+ if(error){if(ME&&bg)return;const g=JSON.parse(localStorage.getItem('arr_ok')||'null'),net=!navigator.onLine||/fetch|network|load failed/i.test(error.message||'');
   if(net&&g&&g.u===UID&&Date.now()-g.t<2592e5){ME={nome:g.n,is_admin:g.a,is_owner:g.o};openApp();return}
   gate(net?'rt':'dn',net?'Sem conexão. Conecte-se à internet para validar o acesso.':'Não foi possível validar o seu acesso agora. Tente novamente em instantes.');$('#lr').hidden=false;return}
  if(!data){gate('dn','Este usuário ainda não tem acesso ao app. Fale com o administrador.');return}
- if(!data.ok){localStorage.removeItem('arr_ok');gate('dn',data.status==='ativo'?'O seu acesso expirou. Fale com o administrador.':'O seu acesso foi bloqueado. Fale com o administrador.');return}
+ if(!data.ok){localStorage.removeItem('arr_ok');localStorage.removeItem('arr3');gate('dn',data.status==='ativo'?'O seu acesso expirou. Fale com o administrador.':'O seu acesso foi bloqueado. Fale com o administrador.');return}
  ME=data;localStorage.setItem('arr_ok',JSON.stringify({u:UID,t:Date.now(),n:data.nome,a:data.is_admin,o:data.is_owner}));openApp()}
 $('#lf').onsubmit=async e=>{e.preventDefault();const b=$('#lb');b.disabled=true;$('#lm').textContent='';
  const {error}=await SB.auth.signInWithPassword({email:$('#le').value.trim(),password:$('#lp').value});b.disabled=false;
  if(error){$('#lm').textContent=/invalid/i.test(error.message)?'E-mail ou senha incorretos.':'Não foi possível entrar. Verifique a conexão.';return}
  $('#lp').value='';chk()};
-$('#lr').onclick=chk;
-const sair=async()=>{try{await SB.auth.signOut()}catch{}localStorage.removeItem('arr_ok');location.reload()};
+$('#lr').onclick=()=>chk();
+const sair=async()=>{try{await SB.auth.signOut()}catch{}localStorage.removeItem('arr_ok');localStorage.removeItem('arr3');location.reload()};
 $('#lo').onclick=$('#out').onclick=sair;
 $('#ac').onclick=()=>$('#sh').hidden=false;$('#shc').onclick=()=>$('#sh').hidden=true;
-$('#pw').onclick=async()=>{const p=prompt('Nova senha (mínimo 8 caracteres):');if(!p)return;if(p.length<8){alert('A senha precisa ter pelo menos 8 caracteres.');return}
+$('#pw').onclick=async()=>{const p=await askPw('Trocar minha senha');if(!p)return;
  const {error}=await SB.auth.updateUser({password:p});alert(error?'Não foi possível trocar a senha.':'Senha alterada.')};
+function askPw(t,n){return new Promise(ok=>{$('#pt').textContent=t;$('#pn').textContent=n||'';$('#p1').value=$('#p2').value='';$('#pe').textContent='';$('#pm').hidden=false;$('#p1').focus();
+ const f=$('#pf'),end=v=>{$('#pm').hidden=true;f.onsubmit=null;$('#pc').onclick=null;$('#p1').value=$('#p2').value='';ok(v)};
+ f.onsubmit=e=>{e.preventDefault();const a=$('#p1').value;if(a.length<8||a.length>72){$('#pe').textContent='A senha precisa ter entre 8 e 72 caracteres.';return}if(a!==$('#p2').value){$('#pe').textContent='As senhas não conferem.';return}end(a)};
+ $('#pc').onclick=()=>end(null)})}
 const fe=async e=>{let m='Erro ao executar.';try{m=(await e.context.json()).erro||m}catch{}return m};
 async function ld(){$('#al').textContent='Carregando…';let r;
  try{await SB.auth.getSession();const q=()=>SB.from('arrendaagro_acessos').select('*').order('criado_em',{ascending:false});r=await q();
@@ -310,23 +324,23 @@ async function ld(){$('#al').textContent='Carregando…';let r;
  const {data,error}=r;
  if(error){$('#al').innerHTML='Não foi possível carregar a lista ('+E(error.message||error)+'). <button class="alt" data-a="r">Tentar de novo</button>';return}
  $('#al').innerHTML=data.map(u=>{const me=u.user_id===UID,d=`data-i="${u.user_id}" data-n="${E(u.nome||'')}" data-e="${E(u.email)}" data-c="${u.conta_criada_aqui?1:0}" data-s="${u.status}" data-ad="${u.is_admin?1:0}"`;
- return `<div class="ur"><div><b>${E(u.nome||u.email)}</b>${u.is_owner?' <em>dono</em>':u.is_admin?' <em>admin</em>':''}<small>${E(u.email)} · ${u.status==='ativo'?'ativo':'bloqueado'}${u.valido_ate?' · até '+fd(u.valido_ate):''}<br>Último acesso: ${u.ultimo_acesso?new Date(u.ultimo_acesso).toLocaleString('pt-BR'):'nunca'}</small></div><div class="ua"><button data-a="t" ${d}>${u.status==='ativo'?'Bloquear':'Ativar'}</button><button class="alt" data-a="v" ${d}>Validade</button><button class="alt" data-a="e" ${d}>Editar</button><button class="alt" data-a="s" ${d}>Nova senha</button>${ME&&ME.is_owner&&!u.is_owner?`<button class="alt" data-a="m" ${d}>${u.is_admin?'Remover admin':'Tornar admin'}</button>`:''}${me||u.is_owner?'':`<button class="del" data-a="x" ${d}>Excluir</button>`}</div></div>`}).join('')||'Nenhum usuário.'}
+ return `<div class="ur"><div><b>${E(u.nome||u.email)}</b>${u.is_owner?' <em>dono</em>':u.is_admin?' <em>admin</em>':''}<small>${E(u.email)} · ${u.status==='ativo'?'ativo':'bloqueado'}${u.valido_ate?' · até '+fd(u.valido_ate):''}<br>Último acesso: ${u.ultimo_acesso?new Date(u.ultimo_acesso).toLocaleString('pt-BR'):'nunca'}</small></div><div class="ua"><button data-a="t" ${d}>${u.status==='ativo'?'Bloquear':'Ativar'}</button><button class="alt" data-a="v" ${d}>Validade</button><button class="alt" data-a="e" ${d}>Editar</button>${(ME&&ME.is_owner)||u.conta_criada_aqui?`<button class="alt" data-a="s" ${d}>Nova senha</button>`:''}${ME&&ME.is_owner&&!u.is_owner?`<button class="alt" data-a="m" ${d}>${u.is_admin?'Remover admin':'Tornar admin'}</button>`:''}${me||u.is_owner?'':`<button class="del" data-a="x" ${d}>Excluir</button>`}</div></div>`}).join('')||'Nenhum usuário.'}
 $('#adm').onclick=()=>{$('#sh').hidden=true;$('#ad').hidden=false;ld()};$('#adc').onclick=()=>$('#ad').hidden=true;
 $('#al').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const D=b.dataset,id=D.i,a=D.a;if(a==='r')return ld();
  const call=async body=>{const {error}=await SB.functions.invoke('arrendaagro-admin',{body});if(error){alert(await fe(error));return false}return true};
  if(a==='t'){const ns=D.s==='ativo'?'bloqueado':'ativo';if(id===UID&&ns==='bloqueado'&&!confirm('Você vai bloquear o seu próprio acesso. Continuar?'))return;await SB.from('arrendaagro_acessos').update({status:ns}).eq('user_id',id)}
  if(a==='v'){const v=prompt('Válido até (AAAA-MM-DD). Deixe vazio para sem limite:');if(v===null)return;if(v&&!/^\d{4}-\d{2}-\d{2}$/.test(v)){alert('Use o formato AAAA-MM-DD.');return}await SB.from('arrendaagro_acessos').update({valido_ate:v||null}).eq('user_id',id)}
- if(a==='s'){const p=prompt('Nova senha (mínimo 8 caracteres).\nAtenção: a conta é do projeto inteiro; se essa pessoa usa outro app dele, a senha muda lá também.');if(!p)return;if(await call({acao:'senha',user_id:id,senha:p}))alert('Senha alterada.')}
+ if(a==='s'){const p=await askPw('Nova senha para '+D.n,'Atenção: se essa pessoa usa a mesma conta em outro app deste projeto, a senha muda lá também.');if(!p)return;if(await call({acao:'senha',user_id:id,senha:p}))alert('Senha alterada.')}
  if(a==='e'){const n=prompt('Nome:',D.n);if(n===null)return;let em=D.e;if(D.c==='1'){const x=prompt('E-mail:',D.e);if(x===null)return;em=x}if(await call({acao:'editar',user_id:id,nome:n,email:em}))alert('Dados atualizados.')}
  if(a==='m'){const on=D.ad!=='1';if(!confirm(on?'Dar acesso de administrador a '+D.n+'?':'Remover o acesso de administrador de '+D.n+'?'))return;await call({acao:'admin',user_id:id,admin:on})}
  if(a==='x'){if(!confirm(D.c==='1'?'Excluir '+D.n+' permanentemente?\nA conta será apagada. Se ela tiver sido usada em outro app deste projeto, os dados de lá também serão apagados.':'Remover o acesso de '+D.n+' ao ArrendaAgro?\nA conta de login continua existindo.'))return;if(await call({acao:'excluir',user_id:id}))alert('Pronto.')}
  ld()};
-$('#au').onclick=async()=>{const m=$('#am');m.textContent='Salvando…';
- const {data,error}=await SB.functions.invoke('arrendaagro-admin',{body:{acao:'criar',nome:$('#an').value,email:$('#ae').value,senha:$('#ap').value,valido_ate:$('#av').value,admin:$('#aa').value==='1'}});
- if(error){m.textContent=await fe(error);return}
- m.textContent=data.existente?'Acesso liberado. Esse e-mail já tinha conta: a pessoa entra com a senha que já usa.':'Usuário criado. Envie o e-mail e a senha temporária para a pessoa.';
- ['an','ae','ap','av'].forEach(i=>$('#'+i).value='');$('#aa').value='0';ld()};
-setInterval(()=>{if(ME&&navigator.onLine)chk()},3e5);addEventListener('online',()=>{if(!ME)chk()});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)chk()});
+$('#au').onclick=async()=>{const m=$('#am'),bt=$('#au');m.textContent='Salvando…';bt.disabled=true;
+ try{const {data,error}=await SB.functions.invoke('arrendaagro-admin',{body:{acao:'criar',nome:$('#an').value,email:$('#ae').value,senha:$('#ap').value,valido_ate:$('#av').value,admin:$('#aa').value==='1'}});
+  if(error){m.textContent=await fe(error);return}
+  m.textContent=data.existente?'Acesso liberado. Esse e-mail já tinha conta: a pessoa entra com a senha que já usa.':'Usuário criado. Envie o e-mail e a senha temporária para a pessoa.';
+  ['an','ae','ap','av'].forEach(i=>$('#'+i).value='');$('#aa').value='0';ld()}finally{bt.disabled=false}};
+setInterval(()=>{if(ME&&navigator.onLine)chk(true)},3e5);addEventListener('online',()=>{if(!ME)chk()});document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)chk(true)});
 chk();
 </script>
 </body>
